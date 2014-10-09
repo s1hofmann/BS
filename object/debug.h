@@ -17,12 +17,20 @@
 
 #include "device/cgastr.h"
 
-extern CGA_Stream dout;
+extern CGA_Stream dout_CPU0;
+extern CGA_Stream dout_CPU1;
+extern CGA_Stream dout_CPU2;
+extern CGA_Stream dout_CPU3;
+
+#include "machine/apicsystem.h"
+extern APICSystem system;
 
 #ifdef DEBUG
-#define DBG dout << "DBG: "
+#define DBG ((system.getCPUID() == 0) ? dout_CPU0 : \
+                ((system.getCPUID() == 1) ? dout_CPU1 : \
+                ((system.getCPUID() == 2) ? dout_CPU2 : dout_CPU3))) << "DBG: "
 #else
-#define DBG if (false) dout
+#define DBG if (false) dout_CPU0
 #endif
 
 #endif // __DEBUG_H__
