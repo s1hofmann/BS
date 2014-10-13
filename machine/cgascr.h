@@ -63,6 +63,11 @@ class CGA_Screen
         void getpos(int &x, int &y);
 
         /**
+         * Draws a frame around the screen area.
+         */
+        void drawFrame();
+
+        /**
          * Calculates the video memory offset with respect to x and y coordinates
          */
         int getoffset(int x, int y);
@@ -70,7 +75,7 @@ class CGA_Screen
         /**
          * Clears the whole screen (testing purposes only)
          */
-        void cls();
+        void cls(char x);
 
         void show(int x, int y, char character, unsigned char attrib=STD_ATTR);
 
@@ -83,10 +88,10 @@ class CGA_Screen
     private:
         CGA_Screen(const CGA_Screen &copy); // Verhindere Kopieren
 
-        int scr_x;          //Left boundary of screen object
-        int scr_y;          //Upper boundary of screen object
-        int scr_width;      //Width of screen object
-        int scr_height;     //Height of screen object
+        int scr_fx;         //Left boundary of screen object
+        int scr_fy;         //Upper boundary of screen object
+        int scr_tx;         //Right boundary of screen object
+        int scr_ty;         //Lower boundary of screen object
 
         bool scr_cursor;    //Use hardware cursor?
 

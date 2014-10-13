@@ -8,12 +8,29 @@ char *const CGA_Screen::CGA_START = reinterpret_cast<char *const>(0xb8000);
 
 CGA_Screen::CGA_Screen(int from_col, int to_col, int from_row, int to_row, bool use_cursor)
 {
-    this->scr_x = from_col;
-    this->scr_y = from_row;
-    this->scr_width = to_col - from_col;
-    this->scr_height = to_row - from_row;
+    this->scr_fx = from_col;
+    this->scr_fy = from_row;
+    this->scr_tx = to_col;
+    this->scr_ty = to_row;
 
     this->scr_cursor = use_cursor;
+
+    setpos(0, 0);
+
+    drawFrame();
+}
+
+void CGA_Screen::drawFrame()
+{
+    for(int x = 0; x < this->scr_tx - this->scr_fx; ++x)
+    {
+        show(x, this->scr_ty - this->scr_fy, '-');
+    }
+
+    for(int y = 0; y < this->scr_ty - this->scr_fy; ++y)
+    {
+        show(this->scr_tx - this->scr_fx, y, '|');
+    }
 }
 
 unsigned char CGA_Screen::attribute(CGA_Screen::color bg, CGA_Screen::color fg, bool blink)
@@ -32,7 +49,7 @@ void CGA_Screen::setpos(int x, int y)
         IO_Port scr_index(0x3d4);
         IO_Port scr_data(0x3d5);
 
-        int offset = *CGA_START+getoffset(x, y);
+        int offset = 0xb000 + getoffset(this->pos_x, this->pos_y);
         scr_index.outb(14);
         //write low byte
         scr_data.outb(offset & 0xff);
@@ -55,38 +72,43 @@ void CGA_Screen::getpos(int &x, int &y)
 
 void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
 {
-    if((x >= 0 and y >= 0) and (x < COLUMNS and y < ROWS))
+    if((x >= 0 and y >= 0) and (x <= this->scr_tx - this->scr_fx and y <= this->scr_ty - this->scr_fy))
     {
-        CGA_Screen::CGA_START[getoffset(x, y)] = character; 
+        CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)] = character; 
         if(attrib)
         {
-            CGA_Screen::CGA_START[getoffset(x, y)+1] = attrib;
+            CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)+1] = attrib;
         }
         else
         {
-            CGA_Screen::CGA_START[getoffset(x, y)+1] = CGA_Screen::STD_ATTR;
+            CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)+1] = CGA_Screen::STD_ATTR;
         }
     }
-
-    setpos(this->pos_x + 1, this->pos_y);
 }
 
 void CGA_Screen::print(char *string, int length, unsigned char attrib)
 {
-    for(int i = 0; i < length; ++i)
+    int i = 0;
+    while(i < length)
     {
         show(this->pos_x, this->pos_y, string[i], attrib);
+        setpos(this->pos_x+1, this->pos_y);
+        ++i;
     }
+
+    drawFrame();
 }
 
-void CGA_Screen::cls()
+void CGA_Screen::cls(char x)
 {
-    for(int i = 0; i < COLUMNS; ++i)
+    for(int i = this->scr_fx; i < this->scr_tx; ++i)
     {
-        for(int j = 0; j < ROWS; ++j)
+        for(int j = this->scr_fy; j < this->scr_ty; ++j)
         {
-            CGA_Screen::CGA_START[getoffset(i, j)] = ' ';
+            CGA_Screen::CGA_START[getoffset(i, j)] = x;
             CGA_Screen::CGA_START[getoffset(i, j)+1] = STD_ATTR;
         }
     }
+
+    drawFrame();
 }

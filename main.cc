@@ -59,15 +59,18 @@ extern "C" int main_ap()
     system.initLAPIC();
     system.callin();
 
-    CGA_Screen test(0, 80, 0, 25, true);
+    CGA_Screen test(0, 20, 0, 5);
+    CGA_Screen test2(21, 40, 6, 24);
 
     unsigned char attr = test.attribute(test.RED, test.GREEN, true);
 
-    test.cls();
-    test.show(56, 22, 'x');
+    test.cls('x');
     test.setpos(1, 1);
     test.print("Hello, world!", 13, attr);
-    test.print("test", 4);
+
+    test2.cls('u');
+    test2.setpos(2,2);
+    test2.print("Window 2", 8);
     
     return 0;
 }
