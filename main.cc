@@ -9,6 +9,7 @@
 /* INCLUDES */
 
 #include "machine/apicsystem.h"
+#include "machine/cgascr.h"
 
 extern APICSystem system;
 
@@ -57,6 +58,16 @@ extern "C" int main_ap()
     system.waitForCallout();
     system.initLAPIC();
     system.callin();
+
+    CGA_Screen test(0, 80, 0, 25, true);
+
+    unsigned char attr = test.attribute(test.RED, test.GREEN, true);
+
+    test.cls();
+    test.show(56, 22, 'x');
+    test.setpos(1, 1);
+    test.print("Hello, world!", 13, attr);
+    test.print("test", 4);
     
     return 0;
 }
