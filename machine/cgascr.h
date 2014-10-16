@@ -77,8 +77,14 @@ class CGA_Screen
          */
         void cls(char x);
 
+        /**
+         * Prints a single character at the given coordinates with respect to the 'windows' origin
+         */
         void show(int x, int y, char character, unsigned char attrib=STD_ATTR);
 
+        /**
+         * Prints a string at the current position set via setpos(x,y)
+         */
         void print(char *string, int length, unsigned char attrib=STD_ATTR);
 
         static unsigned char attribute(CGA_Screen::color bg, CGA_Screen::color fg, bool blink);

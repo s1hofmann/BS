@@ -38,9 +38,19 @@
  */
 class Stringbuffer
 {
-private:
-    Stringbuffer(const Stringbuffer &copy); // Verhindere Kopieren
-     
+    public:
+        virtual ~Stringbuffer() {};
+
+    protected:
+        Stringbuffer();
+        void put(char c);
+        virtual void flush() = 0;
+
+        char buffer[80];
+        int pos;
+
+    private:
+        Stringbuffer(const Stringbuffer &copy); // Verhindere Kopieren
 };
 
 #endif

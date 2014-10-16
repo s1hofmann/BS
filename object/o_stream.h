@@ -64,12 +64,32 @@
  *  Manipulatoren.
  */
 
-class O_Stream
-     
+class O_Stream : public Stringbuffer
 {
-private:
-    O_Stream(const O_Stream &copy); // Verhindere Kopieren
-     
+    private:
+        O_Stream(const O_Stream &copy); // Verhindere Kopieren
+    
+    public:
+        O_Stream();
+
+        virtual ~O_Stream();
+
+        virtual void flush() = 0;
+
+        O_Stream& operator<<(char c);
+        O_Stream& operator<<(unsigned char c);
+        O_Stream& operator<<(const char *string);
+        O_Stream& operator<<(bool b);
+        O_Stream& operator<<(short ival);
+        O_Stream& operator<<(unsigned short ival);
+        O_Stream& operator<<(int ival);
+        O_Stream& operator<<(unsigned int ival);
+        O_Stream& operator<<(long ival);
+        O_Stream& operator<<(unsigned long ival);
+        O_Stream& operator<<(void *ptr);
+        O_Stream& operator<<(O_Stream &(*f)(O_Stream &));
+
+        int base;
 };
 
 #endif
