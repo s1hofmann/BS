@@ -3,7 +3,10 @@
 
 #include "object/strbuf.h"
 
-extern "C" void __cxa_pure_virtual() { while (1); }
+//extern "C" void __cxa_pure_virtual() { while (1); }
+
+//void operator delete(void*) {};
+//void operator delete[] (void*) {};
 
 Stringbuffer::Stringbuffer()
 {

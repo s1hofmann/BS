@@ -72,13 +72,13 @@ class O_Stream : public Stringbuffer
     public:
         O_Stream();
 
-        virtual ~O_Stream();
+        virtual ~O_Stream() = 0;
 
         virtual void flush() = 0;
 
         O_Stream& operator<<(char c);
         O_Stream& operator<<(unsigned char c);
-        O_Stream& operator<<(const char *string);
+        O_Stream& operator<<(char *string);
         O_Stream& operator<<(bool b);
         O_Stream& operator<<(short ival);
         O_Stream& operator<<(unsigned short ival);
@@ -92,5 +92,10 @@ class O_Stream : public Stringbuffer
         int base;
 };
 
+O_Stream &bin(O_Stream &stream);
+O_Stream &oct(O_Stream &stream);
+O_Stream &hex(O_Stream &stream);
+O_Stream &dec(O_Stream &stream);
+O_Stream &endl(O_Stream &stream);
 #endif
 
