@@ -10,6 +10,8 @@
 
 #include "machine/apicsystem.h"
 #include "machine/cgascr.h"
+#include "object/o_stream.h"
+#include "device/cgastr.h"
 
 extern APICSystem system;
 
@@ -55,23 +57,27 @@ extern "C" int main()
 extern "C" int main_ap()
 {
     //DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
+    
     system.waitForCallout();
     system.initLAPIC();
     system.callin();
 
-    CGA_Screen test(0, 20, 0, 5);
-    CGA_Screen test2(21, 40, 6, 24);
+    //CGA_Screen test(0, 20, 0, 5);
+    //CGA_Screen test2(21, 40, 6, 24);
+
+    CGA_Stream test(0, 79, 0, 15);
 
     unsigned char attr = test.attribute(test.RED, test.GREEN, true);
 
-    test.cls('x');
     test.setpos(1, 1);
     test.print("Hello, world!", 13, attr);
 
-    test2.cls('u');
-    test2.setpos(2,2);
-    test2.print("Window 2", 8);
-    
+    test << '1' << hex << 15 << bin << 15 << endl;
+
+    //test2.cls('u');
+    //test2.setpos(2,2);
+    //test2.print("Window 2", 8);
+
     return 0;
 }
 

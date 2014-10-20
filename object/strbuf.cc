@@ -25,4 +25,8 @@ void Stringbuffer::put(char c)
         this->buffer[pos] = c;
         ++this->pos;
     }
+    else
+    {
+        this->flush();
+    }
 }

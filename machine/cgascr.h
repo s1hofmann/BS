@@ -61,6 +61,8 @@ class CGA_Screen
         void setpos(int x, int y);
 
         void getpos(int &x, int &y);
+        
+        unsigned char attr; //Screen attribute
 
         /**
          * Draws a frame around the screen area.
@@ -103,6 +105,7 @@ class CGA_Screen
 
         int pos_x;          //Cursor position X
         int pos_y;          //Cursor position Y
+
 };
 
 #endif

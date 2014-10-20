@@ -37,7 +37,7 @@ WARNFLAGS = -Wall -Wextra -Werror -Wno-error=unused-parameter
 OPTFLAGS = -O3 -fomit-frame-pointer
 FLOATINGPOINT = -mno-mmx -mno-sse
 STANDALONEFLAGS = -ffreestanding -fno-builtin -nostartfiles -nodefaultlibs -nostdlib -nostdinc
-CXXFLAGS = -m32 -I. $(OPTFLAGS) $(WARNFLAGS) $(STANDALONEFLAGS) $(FLOATINGPOINT) -Wno-non-virtual-dtor -fno-rtti -fno-exceptions -Wno-write-strings -fno-stack-protector -mno-red-zone
+CXXFLAGS = -m32 -I. $(OPTFLAGS) $(WARNFLAGS) $(STANDALONEFLAGS) $(FLOATINGPOINT) -Wno-non-virtual-dtor -fno-rtti -fno-exceptions -Wno-write-strings -fno-stack-protector -mno-red-zone -std=c++11
 ASMFLAGS = -f $(ASMOBJFORMAT)
 LDFLAGS = -melf_i386
 LDHEAD = $(shell g++ -m32 --print-file-name=crti.o && g++ -m32 --print-file-name=crtbegin.o)

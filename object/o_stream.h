@@ -68,11 +68,13 @@ class O_Stream : public Stringbuffer
 {
     private:
         O_Stream(const O_Stream &copy); // Verhindere Kopieren
+
+        char nums[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
     
     public:
         O_Stream();
 
-        virtual ~O_Stream() = 0;
+        virtual ~O_Stream();
 
         virtual void flush() = 0;
 
