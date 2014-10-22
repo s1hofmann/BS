@@ -18,3 +18,13 @@ void CGA_Stream::flush()
     this->print(this->buffer, this->pos, this->attr);
     this->pos = 0;
 }
+
+void CGA_Stream::setcolor(unsigned char attr)
+{
+    this->attr = attr;
+}
+
+unsigned char CGA_Stream::getcolor(void)
+{
+    return this->attr;
+}

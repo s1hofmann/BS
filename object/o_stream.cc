@@ -88,6 +88,29 @@ O_Stream& O_Stream::operator<<(long ival)
     int len = 0, pos = 1;
 
     long tmp = ival;
+    
+    if(this->base == 8)
+    {
+        this->put('0');
+    }
+    else if(this->base == 16)
+    {
+        this->put('0');
+        this->put('x');
+    }
+    else if(this->base == 2)
+    {
+        this->put('0');
+        this->put('b');
+    }
+    else
+    {
+        if(ival < 0)
+        {
+            this->put('-');
+            ival*=(-1);
+        }
+    }
 
     //Calculate length
     do
@@ -99,12 +122,13 @@ O_Stream& O_Stream::operator<<(long ival)
     char out[len];
 
     //Convert
-    while(ival)
+    do
     {
         out[len-pos] = this->nums[ival%this->base];
         ival/=this->base;
         ++pos;
-    }
+    } while(ival);
+
 
     for(int i=0; i<len; ++i)
     {
@@ -130,11 +154,26 @@ O_Stream& O_Stream::operator<<(unsigned long ival)
     char out[len];
 
     //Convert
-    while(ival)
+    do
     {
         out[len-pos] = this->nums[ival%this->base];
         ival/=10;
         ++pos;
+    } while(ival);
+
+    if(this->base == 8)
+    {
+        this->put('0');
+    }
+    else if(this->base == 16)
+    {
+        this->put('0');
+        this->put('x');
+    }
+    else if(this->base == 2)
+    {
+        this->put('0');
+        this->put('b');
     }
 
     for(int i=0; i<len; ++i)
@@ -148,7 +187,7 @@ O_Stream& O_Stream::operator<<(unsigned long ival)
 O_Stream& O_Stream::operator<<(void *ptr)
 {
     unsigned long tmp = reinterpret_cast<unsigned long>(ptr);
-    *this << tmp;
+    *this << hex << tmp;
     return *this;
 }
 

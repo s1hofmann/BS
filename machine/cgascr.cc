@@ -17,6 +17,8 @@ CGA_Screen::CGA_Screen(int from_col, int to_col, int from_row, int to_row, bool 
 
     setpos(0, 0);
 
+    cls(' ');
+
     drawFrame();
 }
 
@@ -35,7 +37,7 @@ void CGA_Screen::drawFrame()
 
 unsigned char CGA_Screen::attribute(CGA_Screen::color bg, CGA_Screen::color fg, bool blink)
 {
-    unsigned char scr_attribute = blink << 7 | bg << 4 | fg;
+    unsigned char scr_attribute = blink << 8 | bg << 4 | fg;
     return scr_attribute;
 }
 
@@ -49,11 +51,12 @@ void CGA_Screen::setpos(int x, int y)
         IO_Port scr_index(0x3d4);
         IO_Port scr_data(0x3d5);
 
-        int offset = 0xb000 + getoffset(this->pos_x, this->pos_y);
-        scr_index.outb(14);
-        //write low byte
-        scr_data.outb(offset & 0xff);
+        //No memory addresses needed here, just the absolute offset from top left corner
+        int offset = (this->pos_x+this->scr_fx) + (this->pos_y+this->scr_fy)*80;
         scr_index.outb(15);
+        //write low byte
+        scr_data.outb(offset);
+        scr_index.outb(14);
         //shift and write high byte
         scr_data.outb(offset >> 8);
     }

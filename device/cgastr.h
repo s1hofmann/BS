@@ -28,6 +28,9 @@ class CGA_Stream : public CGA_Screen, public O_Stream
 
         virtual void flush();
 
+        unsigned char getcolor(void);
+        void setcolor(unsigned char attr);
+
     private:
         CGA_Stream(CGA_Stream &copy); // Verhindere Kopieren
      
