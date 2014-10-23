@@ -63,7 +63,9 @@ extern "C" int main_ap()
     system.initLAPIC();
     system.callin();
 
-    Keyboard_Controller k;
+    Keyboard_Controller kc;
+    Key k;
+
     CGA_Stream kout(10, 59, 0, 24, true);
 
     unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
@@ -71,6 +73,8 @@ extern "C" int main_ap()
     kout.setcolor(attribute);
 
     kout.setpos(0, 0);
+    k = kc.key_hit();
+    kout << k.ascii();
 
     //bool exit = false;
 

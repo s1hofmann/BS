@@ -21,6 +21,7 @@ class Keyboard_Controller
 {
 private:
     Keyboard_Controller(const Keyboard_Controller &copy); // Verhindere Kopieren
+    void wait_for_ack(IO_Port port);
      
 private:
     unsigned char code;
