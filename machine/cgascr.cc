@@ -12,24 +12,24 @@ CGA_Screen::CGA_Screen(int from_col, int to_col, int from_row, int to_row, bool 
     this->scr_fy = from_row;
     this->scr_tx = to_col;
     this->scr_ty = to_row;
+    this->scr_width = to_col - from_col;
+    this->scr_height = to_row - from_row;
 
     this->scr_cursor = use_cursor;
 
     setpos(0, 0);
 
     cls(' ');
-
-    drawFrame();
 }
 
 void CGA_Screen::drawFrame()
 {
-    for(int x = 0; x < this->scr_tx - this->scr_fx; ++x)
+    for(int x = 0; x < this->scr_width; ++x)
     {
         show(x, this->scr_ty - this->scr_fy, '-');
     }
 
-    for(int y = 0; y < this->scr_ty - this->scr_fy; ++y)
+    for(int y = 0; y < this->scr_height; ++y)
     {
         show(this->scr_tx - this->scr_fx, y, '|');
     }
@@ -73,7 +73,7 @@ void CGA_Screen::getpos(int &x, int &y)
 
 void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
 {
-    if((x >= 0 and y >= 0) and (x <= this->scr_tx - this->scr_fx and y <= this->scr_ty - this->scr_fy))
+    if((x >= 0 and y >= 0) and (x <= this->scr_width and y <= this->scr_height))
     {
         CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)] = character; 
         if(attrib)
@@ -90,21 +90,24 @@ void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
 void CGA_Screen::scroll()
 {
     //Are we at the bottom line?
-    if(this->pos_y+1 >= this->scr_ty-this->scr_fy)
+    if(this->pos_y+1 >= this->scr_height)
     {
-        for(int y = 0; y < this->scr_ty-this->scr_fy-1; ++y)
+        for(int y = 0; y < this->scr_height; ++y)
         {
-            for(int x = 0; x < this->scr_tx-this->scr_fx; ++x)
+            for(int x = 0; x < this->scr_width; ++x)
             {
                 CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+this->scr_fy)] = CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+1+this->scr_fy)];
                 CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+this->scr_fy)+1] = CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+1+this->scr_fy)+1];
             }
         }
-        for(int x = 0; x < this->scr_tx-this->scr_fx; ++x)
+
+        //Clear bottom line
+        for(int x = 0; x < this->scr_width; ++x)
         {
-            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_ty-1)] = ' ';
-            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_ty-1)+1] = CGA_Screen::CGA_START[getoffset(this->scr_tx-1,this->scr_ty-2)];
+            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_height-1)] = ' ';
         }
+        //Set cursor to last line
+        setpos(0, this->scr_height-2);
     }
 }
 

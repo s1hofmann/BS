@@ -102,6 +102,8 @@ class CGA_Screen
         int scr_fy;         //Upper boundary of screen object
         int scr_tx;         //Right boundary of screen object
         int scr_ty;         //Lower boundary of screen object
+        int scr_width;      //Window width 
+        int scr_height;     //Window height
 
         bool scr_cursor;    //Use hardware cursor?
 

@@ -91,8 +91,6 @@ extern "C" int main_ap()
     kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
     kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
     kout << "smiley:     " << ((char)1) << endl;
-    kout << hex<< (void*)3735928559 << endl;
-    kout << bin << -4 << endl;
     return 0;
 }
 

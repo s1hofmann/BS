@@ -88,6 +88,7 @@ O_Stream& O_Stream::operator<<(long ival)
     int len = 0, pos = 1;
     //assert(sizeof(long) <= 8);
     char out[20]; // 20 -> max digits for output
+
     long tmp = ival;
     
     if(this->base == 8)
