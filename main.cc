@@ -66,7 +66,7 @@ extern "C" int main_ap()
     Keyboard_Controller kc;
     Key k;
 
-    CGA_Stream kout(10, 19, 0, 24, true);
+    CGA_Stream kout(0, 79, 0, 24, true);
 
     unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
 
