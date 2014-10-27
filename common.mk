@@ -34,7 +34,8 @@ LD = ld
 QEMU = qemu-system-x86_64
 
 WARNFLAGS = -Wall -Wextra -Werror -Wno-error=unused-parameter
-OPTFLAGS = -O3 -fomit-frame-pointer
+#OPTFLAGS = -O3 -fomit-frame-pointer
+OPTFLAGS = -O0
 FLOATINGPOINT = -mno-mmx -mno-sse
 STANDALONEFLAGS = -ffreestanding -fno-builtin -nostartfiles -nodefaultlibs -nostdlib -nostdinc
 CXXFLAGS = -m32 -I. $(OPTFLAGS) $(WARNFLAGS) $(STANDALONEFLAGS) $(FLOATINGPOINT) -Wno-non-virtual-dtor -fno-rtti -fno-exceptions -Wno-write-strings -fno-stack-protector -mno-red-zone -std=c++11

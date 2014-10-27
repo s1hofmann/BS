@@ -86,7 +86,7 @@ O_Stream& O_Stream::operator<<(unsigned int ival)
 O_Stream& O_Stream::operator<<(long ival)
 {
     int len = 0, pos = 1;
-
+    char out[20];
     long tmp = ival;
     
     if(this->base == 8)
@@ -108,7 +108,8 @@ O_Stream& O_Stream::operator<<(long ival)
         if(ival < 0)
         {
             this->put('-');
-            ival*=(-1);
+            ival = (~ival) + 1;
+            tmp = ival;
         }
     }
 
@@ -119,7 +120,7 @@ O_Stream& O_Stream::operator<<(long ival)
         tmp/=this->base;
     } while(tmp); //The lazy man's guide to logarithm
 
-    char out[len];
+    //char out[len];
 
     //Convert
     do
