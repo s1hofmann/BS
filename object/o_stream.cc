@@ -157,7 +157,7 @@ O_Stream& O_Stream::operator<<(unsigned long ival)
     do
     {
         out[len-pos] = this->nums[ival%this->base];
-        ival/=10;
+        ival/=this->base;
         ++pos;
     } while(ival);
 
