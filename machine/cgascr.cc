@@ -73,7 +73,7 @@ void CGA_Screen::getpos(int &x, int &y)
 
 void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
 {
-    if((x >= 0 and y >= 0) and (x <= this->scr_tx - this->scr_fx and y <= this->scr_ty - this->scr_fy))
+    if((x >= 0 and y >= 0) and (x <= this->scr_width and y <= this->scr_height))
     {
         CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)] = character; 
         if(attrib)
@@ -104,7 +104,7 @@ void CGA_Screen::scroll()
         //Clear bottom line
         for(int x = 0; x < this->scr_width; ++x)
         {
-            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_ty-this->scr_fy-1)] = ' ';
+            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_height-1)] = ' ';
         }
         //Set cursor to last line
         setpos(0, this->scr_height-2);
