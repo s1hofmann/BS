@@ -61,6 +61,8 @@ class CGA_Screen
         void setpos(int x, int y);
 
         void getpos(int &x, int &y);
+
+        void scroll();
         
         unsigned char attr; //Screen attribute
 

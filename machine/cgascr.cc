@@ -87,6 +87,27 @@ void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
     }
 }
 
+void CGA_Screen::scroll()
+{
+    //Are we at the bottom line?
+    if(this->pos_y+1 >= this->scr_ty-this->scr_fy)
+    {
+        for(int y = 0; y < this->scr_ty-this->scr_fy-1; ++y)
+        {
+            for(int x = 0; x < this->scr_tx-this->scr_fx; ++x)
+            {
+                CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+this->scr_fy)] = CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+1+this->scr_fy)];
+                CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+this->scr_fy)+1] = CGA_Screen::CGA_START[getoffset(x+this->scr_fx,y+1+this->scr_fy)+1];
+            }
+        }
+        for(int x = 0; x < this->scr_tx-this->scr_fx; ++x)
+        {
+            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_ty-1)] = ' ';
+            CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_ty-1)+1] = CGA_Screen::CGA_START[getoffset(this->scr_tx-1,this->scr_ty-2)];
+        }
+    }
+}
+
 void CGA_Screen::print(char *string, int length, unsigned char attrib)
 {
     int i = 0;
@@ -95,6 +116,7 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
         //Newline
         if(string[i] == '\n')
         {
+            scroll();
             setpos(0, this->pos_y+1);
         }
         else
@@ -105,6 +127,7 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
         //Word wrap
         if(this->pos_x+1 > (this->scr_tx - this->scr_fx))
         {
+            scroll();
             setpos(0, this->pos_y+1);
         }
         ++i;
@@ -123,4 +146,6 @@ void CGA_Screen::cls(char x)
             CGA_Screen::CGA_START[getoffset(i, j)+1] = STD_ATTR;
         }
     }
+
+    drawFrame();
 }
