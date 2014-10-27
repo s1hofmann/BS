@@ -119,8 +119,6 @@ O_Stream& O_Stream::operator<<(long ival)
         tmp/=this->base;
     } while(tmp); //The lazy man's guide to logarithm
 
-    char out[len];
-
     //Convert
     do
     {
