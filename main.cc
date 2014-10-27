@@ -66,7 +66,7 @@ extern "C" int main_ap()
     Keyboard_Controller kc;
     Key k;
 
-    CGA_Stream kout(10, 59, 0, 24, true);
+    CGA_Stream kout(10, 19, 0, 24, true);
 
     unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
 
@@ -79,35 +79,20 @@ extern "C" int main_ap()
     //bool exit = false;
 
     kout << "Test        <stream result> -> <expected>" << endl;
-    kout.setpos(0, 1);
     kout << "zero:       " << 0 << " -> 0" << endl;
-    kout.setpos(0, 2);
     kout << "ten:        " << (10) << " -> 10" << endl;
-    kout.setpos(0, 3);
     kout << "uint max:   " << ~((unsigned int)0) << " -> 4294967295" << endl;
-    kout.setpos(0, 4);
     kout << "int max:    " << ~(1<<31) << " -> 2147483647" << endl;
-    kout.setpos(0, 5);
     kout << "int min:    " << (1<<31) << " -> -2147483648" << endl;
-    kout.setpos(0, 6);
     kout << "some int:   " << (-123456789) << " -> -123456789" << endl;
-    kout.setpos(0, 7);
     kout << "some int:   " << (123456789) << " -> 123456789" << endl;
-    kout.setpos(0, 8);
     kout << "binary:     " << bin << 42 << dec << " -> 0b101010" << endl;
-    kout.setpos(0, 9);
     kout << "octal:      " << oct << 42 << dec << " -> 052" << endl;
-    kout.setpos(0, 10);
     kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
-    kout.setpos(0, 11);
     kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
-    kout.setpos(0, 12);
     kout << "smiley:     " << ((char)1) << endl;
-    kout.setpos(0, 13);
     kout << bin << 4 << endl;
-    kout.setpos(0, 14);
     kout << bin << -4 << endl;
-    kout.setpos(5, 15);
     return 0;
 }
 

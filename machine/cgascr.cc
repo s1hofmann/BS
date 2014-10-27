@@ -54,10 +54,8 @@ void CGA_Screen::setpos(int x, int y)
         //No memory addresses needed here, just the absolute offset from top left corner
         int offset = (this->pos_x+this->scr_fx) + (this->pos_y+this->scr_fy)*80;
         scr_index.outb(15);
-        //write low byte
         scr_data.outb(offset);
         scr_index.outb(14);
-        //shift and write high byte
         scr_data.outb(offset >> 8);
     }
 }
@@ -94,8 +92,21 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
     int i = 0;
     while(i < length)
     {
-        show(this->pos_x, this->pos_y, string[i], attrib);
-        setpos(this->pos_x+1, this->pos_y);
+        //Newline
+        if(string[i] == '\n')
+        {
+            setpos(0, this->pos_y+1);
+        }
+        else
+        {
+            show(this->pos_x, this->pos_y, string[i], attrib);
+            setpos(this->pos_x+1, this->pos_y);
+        }
+        //Word wrap
+        if(this->pos_x+1 > (this->scr_tx - this->scr_fx))
+        {
+            setpos(0, this->pos_y+1);
+        }
         ++i;
     }
 

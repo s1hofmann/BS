@@ -270,19 +270,20 @@ void Keyboard_Controller::reboot ()
 //                  Erlaubt sind Werte zwischen 0 (sehr schnell) und 31
 //                  (sehr langsam).
 
-void Keyboard_Controller::wait_for_ack(IO_Port port)
-{
-    while(port.inb()!=0xfa)
-    {
-    }
-}
-
 void Keyboard_Controller::set_repeat_rate (int speed, int delay)
 {
     data_port.outb(0xf3);
     wait_for_ack(data_port);
     data_port.outb(delay<<5|speed);
     wait_for_ack(data_port);
+}
+
+//Waits until the keyboard controller returns an ACK
+void Keyboard_Controller::wait_for_ack(IO_Port port)
+{
+    while(port.inb()!=kbd_reply::ack)
+    {
+    }
 }
 
 // SET_LED: setzt oder loescht die angegebene Leuchtdiode
