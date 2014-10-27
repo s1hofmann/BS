@@ -123,6 +123,4 @@ void CGA_Screen::cls(char x)
             CGA_Screen::CGA_START[getoffset(i, j)+1] = STD_ATTR;
         }
     }
-
-    drawFrame();
 }
