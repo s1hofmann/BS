@@ -86,7 +86,8 @@ O_Stream& O_Stream::operator<<(unsigned int ival)
 O_Stream& O_Stream::operator<<(long ival)
 {
     int len = 0, pos = 1;
-    char out[20];
+    //assert(sizeof(long) <= 8);
+    char out[20]; // 20 -> max digits for output
     long tmp = ival;
     
     if(this->base == 8)
@@ -108,8 +109,6 @@ O_Stream& O_Stream::operator<<(long ival)
         if(ival < 0)
         {
             this->put('-');
-            ival = (~ival) + 1;
-            tmp = ival;
         }
     }
 
@@ -123,9 +122,12 @@ O_Stream& O_Stream::operator<<(long ival)
     //char out[len];
 
     //Convert
+    int idx = 0;
     do
     {
-        out[len-pos] = this->nums[ival%this->base];
+        idx = (ival%this->base);
+        if(idx<0) idx*=-1;
+        out[len-pos] = this->nums[idx];
         ival/=this->base;
         ++pos;
     } while(ival);
@@ -142,7 +144,8 @@ O_Stream& O_Stream::operator<<(long ival)
 O_Stream& O_Stream::operator<<(unsigned long ival)
 {
     int len = 0, pos = 1;
-
+    //assert(sizeof(long) < 8);
+    char out[20];  // 20 -> max digits for output
     unsigned long tmp = ival;
 
     //Calculate length
@@ -152,7 +155,7 @@ O_Stream& O_Stream::operator<<(unsigned long ival)
         tmp/=this->base;
     } while(tmp); //The lazy man's guide to logarithm
 
-    char out[len];
+    //char out[len];
 
     //Convert
     do
