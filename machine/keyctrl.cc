@@ -229,7 +229,8 @@ Keyboard_Controller::Keyboard_Controller () :
     set_led (led_num_lock, false);
 
     // maximale Geschwindigkeit, minimale Verzoegerung
-    set_repeat_rate (0, 0);
+    // nope, lowest speed, maximum delay
+    set_repeat_rate (3, 30);
 }
 
 // KEY_HIT: Dient der Tastaturabfrage nach dem Auftreten einer Tastatur-
@@ -242,9 +243,27 @@ Keyboard_Controller::Keyboard_Controller () :
 Key Keyboard_Controller::key_hit()
 {
     Key invalid;  // nicht explizit initialisierte Tasten sind ungueltig
-     
-    code = (unsigned char) data_port.inb ();
-     
+    
+    code = (unsigned char) data_port.inb();
+    
+    //Check output buffer bit. If it's 1 then there's some data waiting to be read!
+    if(code & outb)
+    {
+        //If auxb is set data comes from mouse, ignore it
+        if(!(code & auxb))
+        {
+            //When the key is successfully decoded, return it
+            //This is neccessary, otherwise there won't be any output
+            if(key_decoded())
+            {
+                return gather;
+            }
+        }
+        else
+        {
+            return invalid;
+        }
+    }
     return invalid;
 }
 
@@ -272,7 +291,15 @@ void Keyboard_Controller::reboot ()
 
 void Keyboard_Controller::set_repeat_rate (int speed, int delay)
 {
-    data_port.outb(0xf3);
+    //Wait until the input buffer of the keyboard controller is empty, so a new command can be written to it
+    //Even if we are writing data to the keyboard encoder data still passes the keyboard controller first, so we
+    //have to wait for it to be ready before we can pass another command.
+    while(ctrl_port.inb() & inpb)
+    {
+    }
+    
+    //ctrl_port.outb(0xf3); There are definitions in the header...
+    data_port.outb(kbd_cmd::set_speed);
     wait_for_ack(data_port);
     data_port.outb(delay<<5|speed);
     wait_for_ack(data_port);
@@ -293,7 +320,12 @@ void Keyboard_Controller::set_led (led_t led, bool on)
     //Read old port values
     uint8_t old_port = data_port.inb();
 
-    data_port.outb(0xed);
+    //Wait for control port
+    while(ctrl_port.inb()&inpb)
+    {
+    }
+
+    data_port.outb(kbd_cmd::set_led);
     wait_for_ack(data_port);
     //Write new values
     if(on)

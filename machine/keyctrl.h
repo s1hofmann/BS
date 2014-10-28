@@ -21,7 +21,6 @@ class Keyboard_Controller
 {
 private:
     Keyboard_Controller(const Keyboard_Controller &copy); // Verhindere Kopieren
-    void wait_for_ack(IO_Port port);
      
 private:
     unsigned char code;
@@ -69,6 +68,8 @@ private:
      *  gesetzten Modifier-Bits den ASCII Code der Taste.
      */
     void get_ascii_code ();
+
+    void wait_for_ack(IO_Port port);
 public:
 
     /*! \brief Konstruktor; Initialisierung der Tastatur.

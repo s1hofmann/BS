@@ -64,19 +64,32 @@ extern "C" int main_ap()
     system.callin();
 
     Keyboard_Controller kc;
+    kc.set_repeat_rate(3, 15);
     Key k;
 
-    CGA_Stream kout(0, 79, 0, 24, true);
+    CGA_Stream kout(10, 29, 0, 24, true);
 
     unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
 
     kout.setcolor(attribute);
 
     kout.setpos(0, 0);
-    k = kc.key_hit();
-    kout << k.ascii();
 
-    //bool exit = false;
+    bool exit = false;
+
+    while(!exit)
+    {
+        k = kc.key_hit();
+        if(k.valid())
+        {
+            if(k.ascii() == 's')
+            {
+                exit = true;
+                //kc.reboot();
+            }
+            kout << k.ascii();
+        }
+    }
 
     kout << "Test        <stream result> -> <expected>" << endl;
     kout << "zero:       " << 0 << " -> 0" << endl;
