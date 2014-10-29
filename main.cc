@@ -78,10 +78,6 @@ extern "C" int main()
         {
             k = kc.key_hit();
         } while(!(k.valid()));
-        if(k.ascii()=='c')
-        {
-            exit = true;
-        }
         kout << k.ascii();
         kout.flush();
     }

@@ -122,6 +122,27 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
             scroll();
             setpos(0, this->pos_y+1);
         }
+        //Backspace
+        else if(string[i] == 8)
+        {
+            if(this->pos_x-1 >= 0)
+            {
+                show(this->pos_x-1, this->pos_y, ' ', attrib);
+                setpos(this->pos_x-1, this->pos_y);
+            }
+            else
+            {
+                if(this->pos_y-1 >= 0)
+                {
+                    show(this->scr_width-1, this->pos_y-1, ' ', attrib);
+                    setpos(this->scr_width-1, this->pos_y-1);
+                }
+                else
+                {
+                    setpos(0,0);
+                }
+            }
+        }
         else
         {
             show(this->pos_x, this->pos_y, string[i], attrib);
