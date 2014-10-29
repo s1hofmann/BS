@@ -13,6 +13,9 @@
 #include "machine/keyctrl.h"
 #include "object/o_stream.h"
 #include "device/cgastr.h"
+#include "object/debug.h"
+
+#define DEBUG
 
 extern APICSystem system;
 
@@ -29,14 +32,14 @@ extern "C" int main()
      
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
-    //DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
-    //DBG << "Number of CPUs: " << numCPUs << endl;
+    DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
+    DBG << "Number of CPUs: " << numCPUs << endl;
     switch (type) {
         case APICSystem::MP_APIC: {
             //Startet die AP-Prozessoren
             for (unsigned int i = 1; i < numCPUs; i++) {
                 void* startup_stack = (void *) &(cpu_stack[(i) * CPU_STACK_SIZE]);
-                //DBG << "Booting CPU " << i << ", Stack: " << startup_stack << endl;
+                DBG << "Booting CPU " << i << ", Stack: " << startup_stack << endl;
                 
                 system.bootCPU(i, startup_stack);
             }
@@ -49,46 +52,38 @@ extern "C" int main()
         case APICSystem::UNDETECTED: {
         }
     }
-    
-    return 0;
-}
-
-/*! \brief Einsprungpunkt für Applikationsprozessoren
- */
-extern "C" int main_ap()
-{
-    //DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
-    
-    system.waitForCallout();
-    system.initLAPIC();
-    system.callin();
 
     Keyboard_Controller kc;
     kc.set_repeat_rate(3, 15);
     Key k;
 
-    CGA_Stream kout(10, 29, 0, 24, true);
+    CGA_Stream kout(0, 79, 0, 12, true);
+    CGA_Stream dout_CPU0(0, 19, 13, 24, false);
+    CGA_Stream dout_CPU1(20, 39, 13, 24, false);
+    CGA_Stream dout_CPU2(40, 59, 13, 24, false);
+    CGA_Stream dout_CPU3(60, 79, 13, 24, false);
 
     unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
 
     kout.setcolor(attribute);
 
     kout.setpos(0, 0);
+    kout << "test" << endl;
 
     bool exit = false;
 
     while(!exit)
     {
-        k = kc.key_hit();
-        if(k.valid())
+        do
         {
-            if(k.ascii() == 's')
-            {
-                exit = true;
-                //kc.reboot();
-            }
-            kout << k.ascii();
+            k = kc.key_hit();
+        } while(!(k.valid()));
+        if(k.ascii()=='c')
+        {
+            exit = true;
         }
+        kout << k.ascii();
+        kout.flush();
     }
 
     kout << "Test        <stream result> -> <expected>" << endl;
@@ -104,6 +99,23 @@ extern "C" int main_ap()
     kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
     kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
     kout << "smiley:     " << ((char)1) << endl;
+    
+    return 0;
+}
+
+/*! \brief Einsprungpunkt für Applikationsprozessoren
+ */
+extern "C" int main_ap()
+{
+    //DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
+    
+    system.waitForCallout();
+    system.initLAPIC();
+    system.callin();
+
+    //Code in here runs on multiply CPUs
+    //This caused quite a mess when dealing with keyboard input in exercise 1
+
     return 0;
 }
 

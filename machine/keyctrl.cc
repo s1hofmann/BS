@@ -244,13 +244,16 @@ Key Keyboard_Controller::key_hit()
 {
     Key invalid;  // nicht explizit initialisierte Tasten sind ungueltig
     
-    code = (unsigned char) data_port.inb();
+    unsigned char status = static_cast<unsigned char>(ctrl_port.inb());
     
     //Check output buffer bit. If it's 1 then there's some data waiting to be read!
-    if(code & outb)
+    if(status & outb)
     {
+        //Read data
+        code = (unsigned char) data_port.inb();
+        
         //If auxb is set data comes from mouse, ignore it
-        if(!(code & auxb))
+        if(!(status & auxb))
         {
             //When the key is successfully decoded, return it
             //This is neccessary, otherwise there won't be any output
@@ -258,10 +261,6 @@ Key Keyboard_Controller::key_hit()
             {
                 return gather;
             }
-        }
-        else
-        {
-            return invalid;
         }
     }
     return invalid;
@@ -294,7 +293,7 @@ void Keyboard_Controller::set_repeat_rate (int speed, int delay)
     //Wait until the input buffer of the keyboard controller is empty, so a new command can be written to it
     //Even if we are writing data to the keyboard encoder data still passes the keyboard controller first, so we
     //have to wait for it to be ready before we can pass another command.
-    while(ctrl_port.inb() & inpb)
+    while(ctrl_port.inb()&inpb)
     {
     }
     

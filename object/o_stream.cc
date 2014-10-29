@@ -225,7 +225,7 @@ O_Stream &dec(O_Stream &stream)
     return stream;
 }
 
-O_Stream &endl(O_Stream &stream) //Add null terminator and flush the stream to output
+O_Stream &endl(O_Stream &stream) //Add new line and flush the stream to output
 {
     stream << '\n';
     stream.flush();
