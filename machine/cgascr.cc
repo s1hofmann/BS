@@ -171,5 +171,7 @@ void CGA_Screen::cls(char x)
         }
     }
 
+    setpos(0,0);
+
     drawFrame();
 }

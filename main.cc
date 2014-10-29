@@ -25,6 +25,34 @@ static unsigned char cpu_stack[(CPU_MAX - 1) * CPU_STACK_SIZE];
 
 void *multiboot_addr = 0;
 
+unsigned char getch(Keyboard_Controller kc)
+{
+    Key k;
+
+    return k.ascii();
+}
+
+bool strcmp(char *s1, char *s2, int len)
+{
+    int count = 0;
+    for(int i=0; i<len; ++i)
+    {
+        if(s1[i] == s2[i])
+        {
+            ++count;
+        }
+    }
+
+    if(count == len)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 /*! \brief Einsprungpunkt ins System
  */
 extern "C" int main()
@@ -53,6 +81,9 @@ extern "C" int main()
         }
     }
 
+    char cmd[128];
+    int x = 0;
+
     Keyboard_Controller kc;
     kc.set_repeat_rate(3, 15);
     Key k;
@@ -80,6 +111,31 @@ extern "C" int main()
         } while(!(k.valid()));
         kout << k.ascii();
         kout.flush();
+        if(k.ascii()!='\n')
+        {
+            cmd[x] = k.ascii();
+            ++x;
+        }
+        else
+        {
+            if(strcmp(cmd, "cls", 3))
+            {
+                kout.cls(' ');
+            }
+            else if(strcmp(cmd, "reboot", 6))
+            {
+                kc.reboot();
+            }
+            else if(strcmp(cmd, "about", 5))
+            {
+                kout << "VL Betriebssysteme WS 2014/2015 shell" << endl << "Available commands:" << endl << "cls" << endl << "reboot" << endl << "about" << endl;
+            }
+            else
+            {
+                kout << "Unknown command!" << endl;
+            }
+            x = 0;
+        }
     }
 
     kout << "Test        <stream result> -> <expected>" << endl;
