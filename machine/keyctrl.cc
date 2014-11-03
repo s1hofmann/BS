@@ -225,10 +225,10 @@ void Keyboard_Controller::get_ascii_code ()
 Keyboard_Controller::Keyboard_Controller () :
     ctrl_port (0x64), data_port (0x60)
 {
-    // alle LEDs ausschalten (bei vielen PCs ist NumLock nach dem Booten an)
-    //set_led (led_caps_lock, false);
-    //set_led (led_scroll_lock, false);
-    //set_led (led_num_lock, false);
+    //alle LEDs ausschalten (bei vielen PCs ist NumLock nach dem Booten an)
+    set_led (led_caps_lock, false);
+    set_led (led_scroll_lock, false);
+    set_led (led_num_lock, false);
 
     // maximale Geschwindigkeit, minimale Verzoegerung
     // nope, lowest speed, maximum delay
@@ -333,23 +333,30 @@ void Keyboard_Controller::wait_for_ack(IO_Port port)
 
 void Keyboard_Controller::set_led (led_t led, bool on)
 {
-    //Read old port values
-    uint8_t old_port = data_port.inb();
+    static unsigned char led_ctrlbyte;
 
-    //Wait for control port
-    while(ctrl_port.inb() & inpb)
-    {
-    }
-
+    while(ctrl_port.inb() & inpb){ }
+    
     data_port.outb(kbd_cmd::set_led);
-    wait_for_ack(data_port);
-    //Write new values
-    if(on)
-    {
-        data_port.outb(old_port | led);
+
+    // poll until output buffer is ready
+    while(!(ctrl_port.inb() & outb)){}
+    DBG << "kbdctrl buf rdy" << endl;
+    // cmd acknowledged? 
+    if(data_port.inb() & kbd_reply::ack){
+        DBG << "kbdctrl 1nd ack" << endl;
+        if(on){
+        DBG << "led on" << endl;
+            led_ctrlbyte |= led;
+        } else {
+            led_ctrlbyte &= ~(0xff & led);
+        }
     }
-    else
-    {
-        data_port.outb(old_port & led);
+
+    data_port.outb(led_ctrlbyte);
+    while(!(ctrl_port.inb() & outb)){}
+    if(data_port.inb() & kbd_reply::ack){
+        //fine
+        DBG << "kbdctrl 2nd ack" << endl;
     }
 }
