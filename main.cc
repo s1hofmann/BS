@@ -13,15 +13,20 @@
 #include "machine/keyctrl.h"
 #include "object/o_stream.h"
 #include "device/cgastr.h"
+
+#define DEBUG 1
 #include "object/debug.h"
 
-#define DEBUG
 
 extern APICSystem system;
-
 static const unsigned long CPU_STACK_SIZE = 4096;
 // Stack fuer max. 7 APs
 static unsigned char cpu_stack[(CPU_MAX - 1) * CPU_STACK_SIZE];
+
+CGA_Stream dout_CPU0(0, 19, 13, 24, false);
+CGA_Stream dout_CPU1(20, 39, 13, 24, false);
+CGA_Stream dout_CPU2(40, 59, 13, 24, false);
+CGA_Stream dout_CPU3(60, 79, 13, 24, false);
 
 void *multiboot_addr = 0;
 
@@ -58,6 +63,8 @@ bool strcmp(char *s1, char *s2, int len)
 extern "C" int main()
 {
      
+    CGA_Stream kout(0, 79, 0, 12, true);
+
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
@@ -82,17 +89,14 @@ extern "C" int main()
     }
 
     char cmd[128];
-    int x = 0;
+    int cmdpos = 0;
 
     Keyboard_Controller kc;
-    kc.set_repeat_rate(3, 15);
+    static int delay = 3;
+    static int speed = 15;
+    kc.set_repeat_rate(delay, speed);
     Key k;
 
-    CGA_Stream kout(0, 79, 0, 12, true);
-    CGA_Stream dout_CPU0(0, 19, 13, 24, false);
-    CGA_Stream dout_CPU1(20, 39, 13, 24, false);
-    CGA_Stream dout_CPU2(40, 59, 13, 24, false);
-    CGA_Stream dout_CPU3(60, 79, 13, 24, false);
 
     unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
 
@@ -100,7 +104,6 @@ extern "C" int main()
 
     kout.setpos(0, 0);
     kout << "test" << endl;
-
     bool exit = false;
 
     while(!exit)
@@ -111,10 +114,9 @@ extern "C" int main()
         } while(!(k.valid()));
         kout << k.ascii();
         kout.flush();
-        if(k.ascii()!='\n')
-        {
-            cmd[x] = k.ascii();
-            ++x;
+        if(k.ascii()!='\n' && cmdpos < 128) { 
+	    cmd[cmdpos] = k.ascii();
+            ++cmdpos;
         }
         else
         {
@@ -134,8 +136,24 @@ extern "C" int main()
             {
                 kout << "Unknown command!" << endl;
             }
-            x = 0;
+            cmdpos = 0;
         }
+	if(k.ascii() == '+'){
+		kc.set_repeat_rate(++speed, delay);
+		kout << "set speed to: " << speed << endl;
+	}
+	else if (k.ascii() == '-'){
+		kc.set_repeat_rate(--speed, delay);
+		kout << "set speed to: " << speed << endl;
+	}
+	if(k.ascii() == 'u'){
+		kc.set_repeat_rate(speed, ++delay);
+		kout << "set delay to: " << delay << endl;
+	}
+	else if (k.ascii() == 'd'){
+		kc.set_repeat_rate(speed, --delay);
+		kout << "set delay to: " << delay << endl;
+	}
     }
 
     kout << "Test        <stream result> -> <expected>" << endl;

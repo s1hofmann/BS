@@ -4,6 +4,8 @@
 /* INCLUDES */
 
 #include "machine/keyctrl.h"
+#define DEBUG 1
+#include "object/debug.h"
 
 /* GLOBALE VARIABLEN */
 
@@ -224,13 +226,13 @@ Keyboard_Controller::Keyboard_Controller () :
     ctrl_port (0x64), data_port (0x60)
 {
     // alle LEDs ausschalten (bei vielen PCs ist NumLock nach dem Booten an)
-    set_led (led_caps_lock, false);
-    set_led (led_scroll_lock, false);
-    set_led (led_num_lock, false);
+    //set_led (led_caps_lock, false);
+    //set_led (led_scroll_lock, false);
+    //set_led (led_num_lock, false);
 
     // maximale Geschwindigkeit, minimale Verzoegerung
     // nope, lowest speed, maximum delay
-    set_repeat_rate (3, 30);
+    //set_repeat_rate (3, 30);
 }
 
 // KEY_HIT: Dient der Tastaturabfrage nach dem Auftreten einer Tastatur-
@@ -290,24 +292,39 @@ void Keyboard_Controller::reboot ()
 
 void Keyboard_Controller::set_repeat_rate (int speed, int delay)
 {
+    DBG << "kbdctrl enter" << endl;
     //Wait until the input buffer of the keyboard controller is empty, so a new command can be written to it
     //Even if we are writing data to the keyboard encoder data still passes the keyboard controller first, so we
     //have to wait for it to be ready before we can pass another command.
-    while(ctrl_port.inb()&inpb)
-    {
+    if(0 <= speed && speed <= 31 && 0 <= delay && delay <= 3){
+        DBG << "test" << endl;
+	    while(ctrl_port.inb() & inpb)
+	    {
+	    }
+	    
+	    data_port.outb(kbd_cmd::set_speed);
+	    //wait_for_ack(data_port);
+	    // poll until output buffer is ready
+	    while(!(ctrl_port.inb() & outb)){}
+        DBG << "kbdctrl buf rdy" << endl;
+	    // cmd acknowledged? 
+        if(data_port.inb() & kbd_reply::ack){
+            DBG << "kbdctrl 1st ack" << endl;
+	        data_port.outb((delay<<5)|speed);
+            // poll until output buffer is ready
+	        while(!(ctrl_port.inb() & outb)){}
+            if(data_port.inb() & kbd_reply::ack){
+                //fine
+                DBG << "kbdctrl 2nd ack" << endl;
+            }
+        }
     }
-    
-    //ctrl_port.outb(0xf3); There are definitions in the header...
-    data_port.outb(kbd_cmd::set_speed);
-    wait_for_ack(data_port);
-    data_port.outb(delay<<5|speed);
-    wait_for_ack(data_port);
 }
 
 //Waits until the keyboard controller returns an ACK
 void Keyboard_Controller::wait_for_ack(IO_Port port)
 {
-    while(port.inb()!=kbd_reply::ack)
+    while(! (port.inb() & kbd_reply::ack))
     {
     }
 }
@@ -320,7 +337,7 @@ void Keyboard_Controller::set_led (led_t led, bool on)
     uint8_t old_port = data_port.inb();
 
     //Wait for control port
-    while(ctrl_port.inb()&inpb)
+    while(ctrl_port.inb() & inpb)
     {
     }
 
@@ -329,10 +346,10 @@ void Keyboard_Controller::set_led (led_t led, bool on)
     //Write new values
     if(on)
     {
-        data_port.outb(old_port|led);
+        data_port.outb(old_port | led);
     }
     else
     {
-        data_port.outb(old_port&led);
+        data_port.outb(old_port & led);
     }
 }
