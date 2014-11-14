@@ -4,7 +4,7 @@ class IOAPIC {
 public:
 
     /* public methods */
-
+    //Konstruktor Tut nichts. Initialisierung erfolgt mit init() 
     IOAPIC();
     // Initialisierung der IOAPICs. 
     void init();
