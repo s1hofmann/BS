@@ -9,7 +9,7 @@ public:
     Panic ();
     virtual ~Panic ();
 
-    void trigger();
+    virtual void trigger();
 
 private:
     /* data */
