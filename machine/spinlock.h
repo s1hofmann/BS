@@ -4,11 +4,11 @@
 class Spinlock
 {
 public:
-    Spinlock() {};
+    Spinlock() { __sync_lock_release(&the_lock); };
     ~Spinlock() {};
 
     void lock() { __sync_lock_test_and_set(&the_lock, 1); };
-    void unlock() { __sync_lock_release(&the_lock); };
+    void unlock() { __sync_lock_release(&the_lock); the_lock = 0; };
 
 
 private:

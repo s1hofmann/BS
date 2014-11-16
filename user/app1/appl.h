@@ -18,7 +18,9 @@ private:
     int id;
      
 public:
-     
+    Application();
+    ~Application();
+
     /*! \brief Enthält den Code der Anwendung
      */
     void action ();

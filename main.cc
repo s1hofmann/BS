@@ -22,6 +22,8 @@
 #include "device/panic.h"
 #include "device/keyboard.h"
 
+#include "user/app1/appl.h"
+
 #define DEBUG
 
 extern APICSystem system;
@@ -37,6 +39,8 @@ CGA_Stream dout_CPU0(0, 19, 13, 24, false);
 CGA_Stream dout_CPU1(20, 39, 13, 24, false);
 CGA_Stream dout_CPU2(40, 59, 13, 24, false);
 CGA_Stream dout_CPU3(60, 79, 13, 24, false);
+
+Application app1;
 
 static const unsigned long CPU_STACK_SIZE = 4096;
 // Stack fuer max. 7 APs
@@ -76,13 +80,13 @@ bool strcmp(char *s1, char *s2, int len)
  */
 extern "C" int main()
 {
-    ioapic.init();
-    CPU::enable_int();
-    keyboard.plugin();
-    while(true)
-    {
-        CPU::idle();
-    }
+    //ioapic.init();
+    //CPU::enable_int();
+    //keyboard.plugin();
+    //while(true)
+    //{
+        //CPU::idle();
+    //}
 
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
@@ -179,7 +183,7 @@ extern "C" int main()
  */
 extern "C" int main_ap()
 {
-    //DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
+    DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
     
     system.waitForCallout();
     system.initLAPIC();
@@ -187,7 +191,7 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
-
-    return 0;
+   
+return 0;
 }
 
