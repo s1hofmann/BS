@@ -5,8 +5,16 @@
  *  \brief Low-Level Interrupt-Behandlung
  */
 #include "types.h"
- 
+#include "device/cgastr.h"
+#include "machine/lapic.h"
+#include "object/debug.h"
+#include "machine/plugbox.h"
+
 extern "C" void guardian(uint32_t vector);
+
+extern CGA_Stream kout;
+extern LAPIC lapic;
+extern Plugbox plugbox;
 
 /*! \brief Low-Level Interrupt-Behandlung.
  *
@@ -15,6 +23,9 @@ extern "C" void guardian(uint32_t vector);
  */
 void guardian(uint32_t vector)
 {
-     
+    //kout << "Guardian: " << dec << vector << endl;
+    plugbox.report(vector)->trigger();
+
+    lapic.ackIRQ();
 }
 

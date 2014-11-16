@@ -1,6 +1,8 @@
 #include "plugbox.h"
 #include "guard/gate.h"
 
+extern Panic panic;
+
 Plugbox::Plugbox()
 {
     for(int i=0; i<256; ++i)

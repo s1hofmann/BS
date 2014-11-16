@@ -11,13 +11,32 @@
 #include "machine/apicsystem.h"
 #include "machine/cgascr.h"
 #include "machine/keyctrl.h"
-#include "object/o_stream.h"
-#include "device/cgastr.h"
+#include "machine/ioapic.h"
+#include "machine/cpu.h"
+#include "machine/spinlock.h"
+
 #include "object/debug.h"
+#include "object/o_stream.h"
+
+#include "device/cgastr.h"
+#include "device/panic.h"
+#include "device/keyboard.h"
 
 #define DEBUG
 
 extern APICSystem system;
+
+IOAPIC ioapic;
+Plugbox plugbox;
+Panic panic;
+Keyboard keyboard;
+Spinlock lock;
+
+CGA_Stream kout(0, 79, 0, 12, true);
+CGA_Stream dout_CPU0(0, 19, 13, 24, false);
+CGA_Stream dout_CPU1(20, 39, 13, 24, false);
+CGA_Stream dout_CPU2(40, 59, 13, 24, false);
+CGA_Stream dout_CPU3(60, 79, 13, 24, false);
 
 static const unsigned long CPU_STACK_SIZE = 4096;
 // Stack fuer max. 7 APs
@@ -57,7 +76,14 @@ bool strcmp(char *s1, char *s2, int len)
  */
 extern "C" int main()
 {
-     
+    ioapic.init();
+    CPU::enable_int();
+    keyboard.plugin();
+    while(true)
+    {
+        CPU::idle();
+    }
+
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
@@ -81,76 +107,70 @@ extern "C" int main()
         }
     }
 
-    char cmd[128];
-    int x = 0;
+    //char cmd[128];
+    //int x = 0;
 
-    Keyboard_Controller kc;
-    kc.set_repeat_rate(3, 15);
-    Key k;
+    //Keyboard_Controller kc;
+    //kc.set_repeat_rate(3, 15);
+    //Key k;
 
-    CGA_Stream kout(0, 79, 0, 12, true);
-    CGA_Stream dout_CPU0(0, 19, 13, 24, false);
-    CGA_Stream dout_CPU1(20, 39, 13, 24, false);
-    CGA_Stream dout_CPU2(40, 59, 13, 24, false);
-    CGA_Stream dout_CPU3(60, 79, 13, 24, false);
+    //unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
 
-    unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
+    //kout.setcolor(attribute);
 
-    kout.setcolor(attribute);
+    //kout.setpos(0, 0);
+    //kout << "test" << endl;
 
-    kout.setpos(0, 0);
-    kout << "test" << endl;
+    //bool exit = false;
 
-    bool exit = false;
+    //while(!exit)
+    //{
+        //do
+        //{
+            //k = kc.key_hit();
+        //} while(!(k.valid()));
+        //kout << k.ascii();
+        //kout.flush();
+        //if(k.ascii()!='\n')
+        //{
+            //cmd[x] = k.ascii();
+            //++x;
+        //}
+        //else
+        //{
+            //if(strcmp(cmd, "cls", 3))
+            //{
+                //kout.cls(' ');
+            //}
+            //else if(strcmp(cmd, "reboot", 6))
+            //{
+                //kc.reboot();
+            //}
+            //else if(strcmp(cmd, "about", 5))
+            //{
+                //kout << "VL Betriebssysteme WS 2014/2015 shell" << endl << "Available commands:" << endl << "cls" << endl << "reboot" << endl << "about" << endl;
+            //}
+            //else
+            //{
+                //kout << "Unknown command!" << endl;
+            //}
+            //x = 0;
+        //}
+    //}
 
-    while(!exit)
-    {
-        do
-        {
-            k = kc.key_hit();
-        } while(!(k.valid()));
-        kout << k.ascii();
-        kout.flush();
-        if(k.ascii()!='\n')
-        {
-            cmd[x] = k.ascii();
-            ++x;
-        }
-        else
-        {
-            if(strcmp(cmd, "cls", 3))
-            {
-                kout.cls(' ');
-            }
-            else if(strcmp(cmd, "reboot", 6))
-            {
-                kc.reboot();
-            }
-            else if(strcmp(cmd, "about", 5))
-            {
-                kout << "VL Betriebssysteme WS 2014/2015 shell" << endl << "Available commands:" << endl << "cls" << endl << "reboot" << endl << "about" << endl;
-            }
-            else
-            {
-                kout << "Unknown command!" << endl;
-            }
-            x = 0;
-        }
-    }
-
-    kout << "Test        <stream result> -> <expected>" << endl;
-    kout << "zero:       " << 0 << " -> 0" << endl;
-    kout << "ten:        " << (10) << " -> 10" << endl;
-    kout << "uint max:   " << ~((unsigned int)0) << " -> 4294967295" << endl;
-    kout << "int max:    " << ~(1<<31) << " -> 2147483647" << endl;
-    kout << "int min:    " << (1<<31) << " -> -2147483648" << endl;
-    kout << "some int:   " << (-123456789) << " -> -123456789" << endl;
-    kout << "some int:   " << (123456789) << " -> 123456789" << endl;
-    kout << "binary:     " << bin << 42 << dec << " -> 0b101010" << endl;
-    kout << "octal:      " << oct << 42 << dec << " -> 052" << endl;
-    kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
-    kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
-    kout << "smiley:     " << ((char)1) << endl;
+    //kout << "Test        <stream result> -> <expected>" << endl;
+    //kout << "zero:       " << 0 << " -> 0" << endl;
+    //kout << "ten:        " << (10) << " -> 10" << endl;
+    //kout << "uint max:   " << ~((unsigned int)0) << " -> 4294967295" << endl;
+    //kout << "int max:    " << ~(1<<31) << " -> 2147483647" << endl;
+    //kout << "int min:    " << (1<<31) << " -> -2147483648" << endl;
+    //kout << "some int:   " << (-123456789) << " -> -123456789" << endl;
+    //kout << "some int:   " << (123456789) << " -> 123456789" << endl;
+    //kout << "binary:     " << bin << 42 << dec << " -> 0b101010" << endl;
+    //kout << "octal:      " << oct << 42 << dec << " -> 052" << endl;
+    //kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
+    //kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
+    //kout << "smiley:     " << ((char)1) << endl;
     
     return 0;
 }

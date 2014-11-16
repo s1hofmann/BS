@@ -118,6 +118,8 @@ public:
      *  \param on LED an- oder ausschalten.
      */
     void set_led (led_t led, bool on);
+
+    void drainKeyboardBuffer();
 };
 
 #endif

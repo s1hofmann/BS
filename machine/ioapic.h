@@ -2,8 +2,9 @@
 #define IOAPIC_H 
 
 #include "types.h" 
-#include "machine/ioapic_register.h" 
-#include "machine/plugbox.h" 
+#include "machine/ioapic_register.h"
+#include "machine/plugbox.h"
+#include "device/cgastr.h"
 
 class IOAPIC
 {
@@ -20,11 +21,11 @@ public:
     //Lock selected interrupts.
     void forbid(unsigned char slot);
     //Returns interrupt status
-    bool satus(unsigned char slot);
+    bool status(unsigned char slot);
 
     //Memory-mapped IO-APIC register in CPU address space
-    static volatile uint32_t* IOREGSEL_REG = (volatile uint32_t*)0xfec00000;
-    static volatile uint32_t* IOWIN_REG = (volatile uint32_t*)0xfec00010;
+    static volatile uint32_t* IOREGSEL_REG;
+    static volatile uint32_t* IOWIN_REG;
 
 private:
     /* data */

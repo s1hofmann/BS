@@ -304,6 +304,18 @@ void Keyboard_Controller::set_repeat_rate (int speed, int delay)
     wait_for_ack(data_port);
 }
 
+void Keyboard_Controller::drainKeyboardBuffer()
+{
+    unsigned char status = static_cast<unsigned char>(ctrl_port.inb());
+    
+    //Read buffer until it's empty
+    while(status & outb)
+    {
+        //Read data
+        data_port.inb();
+    }
+}
+
 //Waits until the keyboard controller returns an ACK
 void Keyboard_Controller::wait_for_ack(IO_Port port)
 {
