@@ -40,8 +40,6 @@ CGA_Stream dout_CPU1(20, 39, 13, 24, false);
 CGA_Stream dout_CPU2(40, 59, 13, 24, false);
 CGA_Stream dout_CPU3(60, 79, 13, 24, false);
 
-Application app1;
-
 static const unsigned long CPU_STACK_SIZE = 4096;
 // Stack fuer max. 7 APs
 static unsigned char cpu_stack[(CPU_MAX - 1) * CPU_STACK_SIZE];
@@ -80,13 +78,13 @@ bool strcmp(char *s1, char *s2, int len)
  */
 extern "C" int main()
 {
-    //ioapic.init();
-    //CPU::enable_int();
-    //keyboard.plugin();
-    //while(true)
-    //{
-        //CPU::idle();
-    //}
+    ioapic.init();
+    CPU::enable_int();
+    keyboard.plugin();
+    while(true)
+    {
+        CPU::idle();
+    }
 
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();

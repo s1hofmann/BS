@@ -23,10 +23,15 @@ void Keyboard::plugin()
 
 void Keyboard::trigger()
 {
-    k = kc.key_hit();
-    if(k.valid())
+    do
     {
-        kout << k.ascii();
-        kout.flush();
-    }
+        k = kc.key_hit();
+        if(k.ctrl() and k.alt() and k.scancode() == 0x53)
+        {
+            kout << "huhu" << endl;
+            kc.reboot();
+        }
+    } while(!(k.valid()));
+    kout << k.ascii();
+    kout.flush();
 }
