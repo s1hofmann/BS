@@ -1,19 +1,39 @@
 // vim: set et ts=4 sw=4
-
+#include "types.h"
+#ifndef IOAPIC_REGISTERS_H
+#define IOAPIC_REGISTERS_H
 
 struct IOREDTBL_L {
-    unsigned int vector:8;
-    unsigned int delivery_mode:3; 
-    unsigned int destination_mode:1;
-    unsigned int delivery_status:1; 
-    unsigned int polarity:1;
-    unsigned int remote_irr:1;
-    unsigned int trigger_mode:1;
-    unsigned int mask:1; 
-    unsigned int reserved:15;
-}; 
+    uint32_t vector:8,
+            delivery_mode:3,
+            destination_mode:1,
+            delivery_status:1,
+            polarity:1,
+            remote_irr:1,
+            trigger_mode:1,
+            mask:1,
+            reserved:15;
+} __attribute__((packed));
+
+union IORT_L {
+    uint32_t entry_low;
+    struct IOREDTBL_L attrs;
+};
 
 struct IOREDTBL_H {
-    unsigned int reserved:24;
-    unsigned int logical_destination:8;
+    uint32_t reserved:24,
+            logical_destination:8;
+} __attribute__((packed));
+
+union IORT_H {
+    uint32_t entry_high;
+    struct IOREDTBL_H attrs;
 };
+
+
+struct IOREDTBL_ENTRY {
+    struct IOREDTBL_L;
+    struct IOREDTBL_H;
+};
+
+#endif /* include guard for ioapic_registers.h */
