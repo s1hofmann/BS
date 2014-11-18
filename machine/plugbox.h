@@ -16,7 +16,7 @@ public:
 private:
     /* data */
 
-    //Plugbox resembles the interrupt redirection table, so we need 256 possible slots.
+    //Plugbox resembles the interrupt descriptor table, so we need 256 possible slots.
     Gate *gate[256];
 };
 #endif

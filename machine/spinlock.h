@@ -1,8 +1,6 @@
 #ifndef SPINLOCK_H_XFEJG27T
 #define SPINLOCK_H_XFEJG27T
 
-#include "device/cgastr.h"
-
 class Spinlock
 {
 public:

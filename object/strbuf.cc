@@ -2,9 +2,6 @@
 // vim: set et ts=4 sw=4:
 
 #include "object/strbuf.h"
-#include "machine/spinlock.h"
-
-extern Spinlock lock;
 
 Stringbuffer::Stringbuffer()
 {
@@ -18,7 +15,6 @@ Stringbuffer::Stringbuffer()
 
 void Stringbuffer::put(char c)
 {
-    lock.lock();
     if(this->pos+1 < 79)
     {
         this->buffer[pos] = c;
@@ -28,5 +24,4 @@ void Stringbuffer::put(char c)
     {
         this->flush();
     }
-    lock.unlock();
 }

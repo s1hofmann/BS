@@ -8,6 +8,8 @@
 
 /* INCLUDES */
 
+#define DEBUG 1
+
 #include "machine/apicsystem.h"
 #include "machine/cgascr.h"
 #include "machine/keyctrl.h"
@@ -24,8 +26,6 @@
 
 #include "user/app1/appl.h"
 
-#define DEBUG
-
 extern APICSystem system;
 
 IOAPIC ioapic;
@@ -33,8 +33,6 @@ Plugbox plugbox;
 Panic panic;
 Keyboard keyboard;
 Spinlock lock;
-
-int dbg_status = 0;
 
 CGA_Stream kout(0, 79, 0, 12, true);
 CGA_Stream dout_CPU0(0, 19, 13, 24, false);
@@ -48,7 +46,7 @@ static unsigned char cpu_stack[(CPU_MAX - 1) * CPU_STACK_SIZE];
 
 void *multiboot_addr = 0;
 
-unsigned char getch(Keyboard_Controller kc)
+unsigned char getch()
 {
     Key k;
 
@@ -80,14 +78,6 @@ bool strcmp(char *s1, char *s2, int len)
  */
 extern "C" int main()
 {
-    //CPU::enable_int();
-    //ioapic.init();
-    //keyboard.plugin();
-    //while(true)
-    //{
-        //CPU::idle();
-    //}
-
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
@@ -108,6 +98,10 @@ extern "C" int main()
         case APICSystem::UNDETECTED: {
         }
     }
+
+    CPU::enable_int();
+    ioapic.init();
+    keyboard.plugin();
 
     //char cmd[128];
     //int x = 0;
@@ -190,11 +184,28 @@ extern "C" int main_ap()
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
     
-    kout << "first: " << system.getCPUID() << endl;
-    kout.setpos(5,10);
-    kout << "second: " << system.getCPUID() << endl;
-    kout.setpos(14, 3);
-    kout << "third: " << system.getCPUID() << endl;
+    while(true)
+    {
+        lock.lock();
+        kout.setpos(30,1);
+        kout.print(" first",6);
+        kout.show(29,1,static_cast<char>(system.getCPUID()+'0'));
+        lock.unlock();
+        lock.lock();
+        kout.setpos(5,10);
+        kout.print(" second",7);
+        kout.show(4,10,static_cast<char>(system.getCPUID()+'0'));
+        lock.unlock();
+        lock.lock();
+        kout.setpos(14, 3);
+        kout.print(" third", 6);
+        kout.show(13,3,static_cast<char>(system.getCPUID()+'0'));
+        lock.unlock();
+        lock.lock();
+        kout.setpos(10,9);
+        kout.setpos(23,10);
+        lock.unlock();
+    }
    
 return 0;
 }

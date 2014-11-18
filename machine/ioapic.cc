@@ -19,45 +19,44 @@ IOAPIC::~IOAPIC()
 
 void IOAPIC::init()
 {
-    IOAPICID id;
-    IOREDTBL_L low;
-    IOREDTBL_H high;
-
     IOAPICRegister l;
     IOAPICRegister h;
     IOAPICRegister i;
 
-    i.IOAPICID = id;
-    l.IOREDTBL_L = low;
-    h.IOREDTBL_H = high;
-
-    id.ID = system.getIOAPICID();
+    //Every device which connects to the APIC bus need an ID
+    i.IOAPICID.ID = system.getIOAPICID();
 
     *IOREGSEL_REG = IOAPIC_ID_REG;
     *IOWIN_REG = i.value;
 
-    low.vector = plugbox.keyboard;
-    low.delivery_mode = DELIVERY_MODE_LOWESTPRI;
-    low.destination_mode = DESTINATION_MODE_LOGICAL;
-    low.mask = MASK_ENABLED;
-    low.polarity = POLARITY_HIGH;
-    low.trigger_mode = TRIGGER_MODE_EDGE;
+    //Vectors 0 to 31 are use for x86 exception handling, so I'll use just the first usable one
+    //Plugbox initially hooks up all vectors to panic anyways, so basically it can be a random 
+    //number between 32 and 255
+    l.IOREDTBL_L.vector = 32;
+    l.IOREDTBL_L.delivery_mode = DELIVERY_MODE_LOWESTPRI;
+    l.IOREDTBL_L.destination_mode = DESTINATION_MODE_LOGICAL;
+    l.IOREDTBL_L.mask = MASK_DISABLED;
+    l.IOREDTBL_L.polarity = POLARITY_HIGH;
+    l.IOREDTBL_L.trigger_mode = TRIGGER_MODE_EDGE;
 
-    high.logical_destination = 0xff;
-    high.reserved = 0;
+    h.IOREDTBL_H.logical_destination = 0xff;
+    h.IOREDTBL_H.reserved = 0;
 
     //Randomly choosing a slot is NOT the best way to init the IOAPIC
     //After reading through the docs I changed it to the appropriate keyboard slot
     //returned by getIOAPICSlot()
     
     //Calculate offset, 64 bit (2 registers) per entry
-    unsigned int offset = IOAPIC_REDTBL_REG+system.getIOAPICSlot(APICSystem::keyboard)*2;
-    //Write low part
-    *IOREGSEL_REG = offset;
-    *IOWIN_REG = l.value;
-    //Move 32 bits (one register) and write high part
-    *IOREGSEL_REG += 1;
-    *IOWIN_REG = h.value;
+    for(int i=0; i<24; ++i)
+    {
+        unsigned int offset = IOAPIC_REDTBL_REG+i*2;
+        //Write low part
+        *IOREGSEL_REG = offset;
+        *IOWIN_REG = l.value;
+        //Move 32 bits (one register) and write high part
+        *IOREGSEL_REG += 1;
+        *IOWIN_REG = h.value;
+    }
 }
 
 void IOAPIC::config(unsigned char slot, Plugbox::Vector vector)
