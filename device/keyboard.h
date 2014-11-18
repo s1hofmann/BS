@@ -7,8 +7,12 @@ class Keyboard : public Keyboard_Controller, public Gate {
 
 public:
     Keyboard();
+    ~Keyboard();
     // Anstöpseln' der Tastatur.
     void plugin();
     // Unterbrechungsbehandlungsroutine
-    void trigger();
+    virtual void trigger();
+private:
+    Key k;
+    Keyboard_Controller kc;
 };

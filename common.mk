@@ -137,6 +137,8 @@ qemu-ddd: all
 kvm: all
 	/usr/local/bin/kvm-sgid-wrap mpstubs $(QEMUKERNEL) $(QEMUCPUs) $(QEMUINITRD)
 
+kvm-local: all
+	$(QEMU) -enable-kvm -kernel $(QEMUKERNEL) -initrd $(QEMUINITRD) -k en-us -smp $(QEMUCPUs)
 # --------------------------------------------------------------------------
 # Das Image wirds ins Verzeichnis des tftp-servers kopiert, um es ueber
 # pxelinux auf den Testrechnern starten zu können.

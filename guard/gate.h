@@ -6,7 +6,7 @@ class Gate {
 
 public:
     Gate(){};
-    virtual ~Gate(){};
+    ~Gate(){};
     // Unterbrechungsbehandlungsroutine
     virtual void trigger() = 0;
 };

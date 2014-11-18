@@ -319,6 +319,15 @@ void Keyboard_Controller::set_repeat_rate (int speed, int delay)
     }
 }
 
+// Leert den Tastaturpuffer vollständig.
+void Keyboard_Controller::drainKeyboardBuffer(){
+    uint8_t status = (uint8_t) ctrl_port.inb();
+    while(status & outb){
+        DBG << "drain kbd buf" << endl;
+        data_port.inb();
+//        status = (uint8_t) ctrl_port.inb();
+    }
+}
 //Waits until the keyboard controller returns an ACK
 void Keyboard_Controller::wait_for_ack(IO_Port port)
 {

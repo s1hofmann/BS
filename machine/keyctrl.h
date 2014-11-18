@@ -70,6 +70,10 @@ private:
     void get_ascii_code ();
 
     void wait_for_ack(IO_Port port);
+protected:
+
+    void drainKeyboardBuffer();
+
 public:
 
     /*! \brief Konstruktor; Initialisierung der Tastatur.

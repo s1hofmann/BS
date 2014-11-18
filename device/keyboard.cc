@@ -14,24 +14,29 @@ extern CGA_Stream kout;
 
 Keyboard::Keyboard(){
 }
+Keyboard::~Keyboard(){
+}
 void Keyboard::plugin(){
     DBG << "kbd plugin" << endl;
     plugbox.assign(plugbox.keyboard, this);
     ioapic.config(system.getIOAPICSlot(system.keyboard), plugbox.keyboard);
     // shall we call ioapic.allow(system.getIOAPICSlot(system.keyboard)) here?
     ioapic.allow(system.getIOAPICSlot(system.keyboard));
+    this->drainKeyboardBuffer();
 }
 void Keyboard::trigger(){
-    DBG << "kbd trigger" << endl;
-    Key k;
+    DBG << "kbd trig entr" << endl;
     do{
-        k = this->key_hit();
+        k = kc.key_hit();
     } while(!k.valid());
 
-    if(k.ctrl() && k.alt() && (k.scancode() == 0x53)){
+    if(k.ctrl() && k.alt() && (k.scancode() == Key::scan::del)){
         DBG << "reboot" << endl;
         this->reboot();
     } else {
         kout.show(20, 0, k.ascii());
     }
+
+    //this->drainKeyboardBuffer();
+    DBG << "kbd trig lv" << endl;
 }

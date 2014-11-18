@@ -14,6 +14,7 @@
 #include "device/cgastr.h"
 #include "device/keyboard.h"
 #include "machine/ioapic.h"
+#include "machine/spinlock.h"
 #define DEBUG 1
 #include "object/debug.h"
 
@@ -21,6 +22,7 @@
 extern APICSystem system;
 extern IOAPIC ioapic;
 extern Keyboard keyboard;
+extern Spinlock lock;
 static const unsigned long CPU_STACK_SIZE = 4096;
 // Stack fuer max. 7 APs
 static unsigned char cpu_stack[(CPU_MAX - 1) * CPU_STACK_SIZE];
@@ -30,6 +32,10 @@ CGA_Stream dout_CPU1(20, 39, 13, 24, false);
 CGA_Stream dout_CPU2(40, 59, 13, 24, false);
 CGA_Stream dout_CPU3(60, 79, 13, 24, false);
 CGA_Stream kout(0, 79, 0, 12, true);
+
+// set foreground color of kout to color_map[cpu_id]
+// to have each CPU's output differently colored
+static const enum CGA_Screen::color color_map[] = { CGA_Screen::LIGHT_BLUE, CGA_Screen::LIGHT_GREEN, CGA_Screen::LIGHT_CYAN, CGA_Screen::LIGHT_MAGENTA };
 void *multiboot_addr = 0;
 
 /*unsigned char getch(Keyboard_Controller kc)
@@ -158,9 +164,7 @@ extern "C" int main()
 	}
     }
 */
-    while(1){
-        
-    };
+    /*
     kout << "Test        <stream result> -> <expected>" << endl;
     kout << "zero:       " << 0 << " -> 0" << endl;
     kout << "ten:        " << (10) << " -> 10" << endl;
@@ -174,7 +178,11 @@ extern "C" int main()
     kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
     kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
     kout << "smiley:     " << ((char)1) << endl;
-
+*/
+    while(1){
+    }
+    extern int main_ap();
+    main_ap();
     return 0;
 }
 
@@ -182,7 +190,7 @@ extern "C" int main()
  */
 extern "C" int main_ap()
 {
-    //DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
+    DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
     
     system.waitForCallout();
     system.initLAPIC();
@@ -190,7 +198,17 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
-
+ //   int off_y = 5;
+    while(1){
+/*        for(int c = 350000; c < 400000; c++){
+            lock.lock();
+            kout.attribute(CGA_Screen::BLACK, color_map[0 + system.getCPUID()], false);
+            kout.setpos(0, off_y+system.getCPUID());
+            kout << c << endl;
+            lock.unlock();
+        }
+        DBG << "I'm in!" << endl;
+*/  }
     return 0;
 }
 
