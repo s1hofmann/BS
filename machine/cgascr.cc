@@ -4,6 +4,10 @@
 #include "machine/cgascr.h"
 #include "machine/io_port.h"
 
+#include "machine/spinlock.h"
+
+extern Spinlock lock;
+
 char *const CGA_Screen::CGA_START = reinterpret_cast<char *const>(0xb8000);
 
 CGA_Screen::CGA_Screen(int from_col, int to_col, int from_row, int to_row, bool use_cursor)
@@ -43,6 +47,7 @@ unsigned char CGA_Screen::attribute(CGA_Screen::color bg, CGA_Screen::color fg, 
 
 void CGA_Screen::setpos(int x, int y)
 {
+    lock.lock();
     this->pos_x = x;
     this->pos_y = y;
 
@@ -58,6 +63,7 @@ void CGA_Screen::setpos(int x, int y)
         scr_index.outb(14);
         scr_data.outb(offset >> 8);
     }
+    lock.unlock();
 }
 
 int CGA_Screen::getoffset(int x, int y)
@@ -73,6 +79,7 @@ void CGA_Screen::getpos(int &x, int &y)
 
 void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
 {
+    lock.lock();
     if((x >= 0 and y >= 0) and (x <= this->scr_width and y <= this->scr_height))
     {
         CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)] = character; 
@@ -85,6 +92,7 @@ void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
             CGA_Screen::CGA_START[getoffset(x+this->scr_fx, y+this->scr_fy)+1] = CGA_Screen::STD_ATTR;
         }
     }
+    lock.unlock();
 }
 
 void CGA_Screen::scroll()
@@ -92,6 +100,7 @@ void CGA_Screen::scroll()
     //Are we at the bottom line?
     if(this->pos_y+1 >= this->scr_height)
     {
+        lock.lock();
         for(int y = 0; y < this->scr_height; ++y)
         {
             for(int x = 0; x < this->scr_width; ++x)
@@ -106,6 +115,8 @@ void CGA_Screen::scroll()
         {
             CGA_Screen::CGA_START[getoffset(x+this->scr_fx,this->scr_height-1)] = ' ';
         }
+        lock.unlock();
+
         //Set cursor to last line
         setpos(0, this->scr_height-2);
     }
@@ -162,6 +173,7 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
 
 void CGA_Screen::cls(char x)
 {
+    lock.lock();
     for(int i = this->scr_fx; i < this->scr_tx; ++i)
     {
         for(int j = this->scr_fy; j < this->scr_ty; ++j)
@@ -170,6 +182,7 @@ void CGA_Screen::cls(char x)
             CGA_Screen::CGA_START[getoffset(i, j)+1] = STD_ATTR;
         }
     }
+    lock.unlock();
 
     setpos(0,0);
 

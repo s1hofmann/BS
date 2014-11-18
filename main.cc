@@ -34,6 +34,8 @@ Panic panic;
 Keyboard keyboard;
 Spinlock lock;
 
+int dbg_status = 0;
+
 CGA_Stream kout(0, 79, 0, 12, true);
 CGA_Stream dout_CPU0(0, 19, 13, 24, false);
 CGA_Stream dout_CPU1(20, 39, 13, 24, false);
@@ -78,13 +80,13 @@ bool strcmp(char *s1, char *s2, int len)
  */
 extern "C" int main()
 {
-    ioapic.init();
-    CPU::enable_int();
-    keyboard.plugin();
-    while(true)
-    {
-        CPU::idle();
-    }
+    //CPU::enable_int();
+    //ioapic.init();
+    //keyboard.plugin();
+    //while(true)
+    //{
+        //CPU::idle();
+    //}
 
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
@@ -99,10 +101,8 @@ extern "C" int main()
                 
                 system.bootCPU(i, startup_stack);
             }
-            
         }
         case APICSystem::UP_APIC: {
-            
             break;
         }
         case APICSystem::UNDETECTED: {
@@ -189,6 +189,12 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
+    
+    kout << "first: " << system.getCPUID() << endl;
+    kout.setpos(5,10);
+    kout << "second: " << system.getCPUID() << endl;
+    kout.setpos(14, 3);
+    kout << "third: " << system.getCPUID() << endl;
    
 return 0;
 }

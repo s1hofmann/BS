@@ -26,9 +26,8 @@ void Keyboard::trigger()
     do
     {
         k = kc.key_hit();
-        if(k.ctrl() and k.alt() and k.scancode() == 0x53)
+        if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
         {
-            kout << "huhu" << endl;
             kc.reboot();
         }
     } while(!(k.valid()));
