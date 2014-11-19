@@ -105,9 +105,9 @@ extern "C" int main()
         }
     }
 
-    CPU::enable_int();
     ioapic.init();
     keyboard.plugin();
+    CPU::enable_int();
 
     //char cmd[128];
     //int x = 0;
@@ -189,10 +189,12 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
+    CPU::enable_int();
     
     for(long i=0; ; ++i)
     {
-    global.lock();
+        CPU::disable_int();
+        global.lock();
         //Poor mans guide to modulo
         //if(!(i-((i/100)*100)))
         //{
@@ -206,7 +208,8 @@ extern "C" int main_ap()
         kout << "hallo" << endl;
         kout.setpos(20, 2);
         kout << "test2" << " asdf" << endl;
-    global.unlock();
+        global.unlock();
+        CPU::enable_int();
     }
    
 return 0;

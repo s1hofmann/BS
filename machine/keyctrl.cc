@@ -5,6 +5,9 @@
 
 #include "machine/keyctrl.h"
 
+#define DEBUG
+#include "object/debug.h"
+
 /* GLOBALE VARIABLEN */
 
 /* STATIC MEMERS */
@@ -313,6 +316,7 @@ void Keyboard_Controller::drainKeyboardBuffer()
     {
         //Read data
         data_port.inb();
+        status = static_cast<unsigned char>(ctrl_port.inb());
     }
 }
 

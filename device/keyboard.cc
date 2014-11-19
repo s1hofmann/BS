@@ -12,7 +12,7 @@ extern Plugbox plugbox;
 extern CGA_Stream kout;
 extern APICSystem system;
 
-extern int posX;
+extern int posX, j;
 
 Keyboard::Keyboard()
 {
@@ -32,6 +32,7 @@ void Keyboard::plugin()
 
 void Keyboard::trigger()
 {
+    global.lock();
     DBG << "trigger()";
     do
     {
@@ -43,7 +44,6 @@ void Keyboard::trigger()
         kc.reboot();
     }
 
-    global.lock();
     kout.setpos(posX,0);
     kout << k.ascii();
     kout.flush();
