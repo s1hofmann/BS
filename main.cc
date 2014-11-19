@@ -26,6 +26,9 @@
 
 #include "user/app1/appl.h"
 
+#define MAIN_WIDTH 79
+#define MAIN_HEIGHT 12
+
 extern APICSystem system;
 
 IOAPIC ioapic;
@@ -33,14 +36,11 @@ Plugbox plugbox;
 Panic panic;
 Keyboard keyboard;
 
-Spinlock lock; 
-Spinlock lock2;
-Spinlock lock3;
-
 Spinlock global;
 long j = 0;
+int posX = 0;
 
-CGA_Stream kout(0, 79, 0, 12, false);
+CGA_Stream kout(0, MAIN_WIDTH, 0, MAIN_HEIGHT, false);
 CGA_Stream dout_CPU0(0, 19, 13, 24, false);
 CGA_Stream dout_CPU1(20, 39, 13, 24, false);
 CGA_Stream dout_CPU2(40, 59, 13, 24, false);

@@ -1,4 +1,5 @@
 #define DEBUG
+#define MAIN_WIDTH 79
 
 #include "object/debug.h"
 #include "keyboard.h"
@@ -10,6 +11,8 @@ extern IOAPIC ioapic;
 extern Plugbox plugbox;
 extern CGA_Stream kout;
 extern APICSystem system;
+
+extern int posX;
 
 Keyboard::Keyboard()
 {
@@ -41,7 +44,10 @@ void Keyboard::trigger()
     }
 
     global.lock();
+    kout.setpos(posX,0);
     kout << k.ascii();
     kout.flush();
+    ++posX;
+    posX=posX%MAIN_WIDTH;
     global.unlock();
 }
