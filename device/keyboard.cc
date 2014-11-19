@@ -2,7 +2,9 @@
 
 #include "object/debug.h"
 #include "keyboard.h"
-#include "../machine/spinlock.h"
+#include "machine/spinlock.h"
+
+extern Spinlock global;
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
@@ -38,6 +40,8 @@ void Keyboard::trigger()
         kc.reboot();
     }
 
+    global.lock();
     kout << k.ascii();
     kout.flush();
+    global.unlock();
 }

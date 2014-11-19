@@ -3,6 +3,7 @@
 
 #include "machine/cgascr.h"
 #include "machine/io_port.h"
+#include "cgascr.h"
 
 #define DEBUG
 
@@ -21,7 +22,6 @@ CGA_Screen::CGA_Screen(int from_col, int to_col, int from_row, int to_row, bool 
 
     this->scr_cursor = use_cursor;
 
-    DBG << "setpos(0,0)";
     setpos(0, 0);
 
     cls(' ');

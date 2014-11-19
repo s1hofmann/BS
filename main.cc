@@ -32,9 +32,15 @@ IOAPIC ioapic;
 Plugbox plugbox;
 Panic panic;
 Keyboard keyboard;
-Spinlock lock;
 
-CGA_Stream kout(0, 79, 0, 12, true);
+Spinlock lock; 
+Spinlock lock2;
+Spinlock lock3;
+
+Spinlock global;
+long j = 0;
+
+CGA_Stream kout(0, 79, 0, 12, false);
 CGA_Stream dout_CPU0(0, 19, 13, 24, false);
 CGA_Stream dout_CPU1(20, 39, 13, 24, false);
 CGA_Stream dout_CPU2(40, 59, 13, 24, false);
@@ -184,27 +190,23 @@ extern "C" int main_ap()
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
     
-    while(true)
+    for(long i=0; ; ++i)
     {
-        lock.lock();
-        kout.setpos(30,1);
-        kout.print(" first",6);
-        kout.show(29,1,static_cast<char>(system.getCPUID()+'0'));
-        lock.unlock();
-        lock.lock();
-        kout.setpos(5,10);
-        kout.print(" second",7);
-        kout.show(4,10,static_cast<char>(system.getCPUID()+'0'));
-        lock.unlock();
-        lock.lock();
-        kout.setpos(14, 3);
-        kout.print(" third", 6);
-        kout.show(13,3,static_cast<char>(system.getCPUID()+'0'));
-        lock.unlock();
-        lock.lock();
-        kout.setpos(10,9);
-        kout.setpos(23,10);
-        lock.unlock();
+    global.lock();
+        //Poor mans guide to modulo
+        //if(!(i-((i/100)*100)))
+        //{
+            ++j;
+        //}
+        kout.setpos(5,5);
+        kout << j << endl;
+        kout << j*2 << endl;
+        kout << j*4 << endl;
+        kout.setpos(2,8);
+        kout << "hallo" << endl;
+        kout.setpos(20, 2);
+        kout << "test2" << " asdf" << endl;
+    global.unlock();
     }
    
 return 0;
