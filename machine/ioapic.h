@@ -34,7 +34,7 @@ private:
 // id on apic-bus
 union io_apicid {
     uint32_t val;
-    struct ioapic_id {
+    struct IOAPICID {
         uint32_t reserved1: 24,
                  id: 4,
                  reserved2: 4;

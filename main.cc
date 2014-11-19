@@ -9,6 +9,7 @@
 /* INCLUDES */
 
 #include "machine/apicsystem.h"
+#include "machine/cpu.h"
 #include "machine/cgascr.h"
 #include "object/o_stream.h"
 #include "device/cgastr.h"
@@ -72,6 +73,11 @@ bool strcmp(char *s1, char *s2, int len)
 extern "C" int main()
 {
 
+    // important: init ioapic before starting other cpus
+    ioapic.init();
+    keyboard.plugin();
+    CPU::enable_int();
+
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
@@ -93,8 +99,9 @@ extern "C" int main()
         }
     }
 
-    ioapic.init();
-    keyboard.plugin();
+    while(1){
+
+    }
 //   char cmd[128];
 //    int cmdpos = 0;
 
@@ -179,10 +186,7 @@ extern "C" int main()
     kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
     kout << "smiley:     " << ((char)1) << endl;
 */
-    while(1){
-    }
-    extern int main_ap();
-    main_ap();
+    DBG << "terminated!" << endl;
     return 0;
 }
 
@@ -191,15 +195,17 @@ extern "C" int main()
 extern "C" int main_ap()
 {
     DBG << "CPU " << (int) system.getCPUID() << " in main_ap(), waiting for callout." << endl;
-    
+
     system.waitForCallout();
     system.initLAPIC();
     system.callin();
 
+    CPU::enable_int();
+
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
  //   int off_y = 5;
-    while(1){
+    //while(1){
 /*        for(int c = 350000; c < 400000; c++){
             lock.lock();
             kout.attribute(CGA_Screen::BLACK, color_map[0 + system.getCPUID()], false);
@@ -208,7 +214,7 @@ extern "C" int main_ap()
             lock.unlock();
         }
         DBG << "I'm in!" << endl;
-*/  }
+*/  //}
+    DBG << "terminated" << endl;
     return 0;
 }
-

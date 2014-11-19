@@ -14,5 +14,4 @@ public:
     virtual void trigger();
 private:
     Key k;
-    Keyboard_Controller kc;
 };

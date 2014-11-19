@@ -28,34 +28,34 @@ void print_rt_entry(union IORT_L entry){
 void IOAPIC::init(){
     DBG << "ioapic init" << endl;
     /* set IOAPIC ID */
-    *IOAPIC::IOREGSEL_REG = ioapic_id;
-    *IOAPIC::IOWIN_REG = system.getIOAPICID() << 4;
+    *IOAPIC::IOREGSEL_REG = IOAPIC_ID_REG;
+    *IOAPIC::IOWIN_REG = system.getIOAPICID() << 4; // ?
 
     //uint8_t rt_offset = system.getIOAPICSlot(system.keyboard);
+
+    union IORT_L rt_low;
+    rt_low.attrs.mask = MASK_DISABLED; // inactive
+    rt_low.attrs.trigger_mode = TRIGGER_MODE_EDGE; // Flankenstreuerung
+    rt_low.attrs.polarity = POLARITY_HIGH; // Active High
+    rt_low.attrs.destination_mode = DESTINATION_MODE_LOGICAL; // Logical Mode
+    rt_low.attrs.delivery_mode = DELIVERY_MODE_LOWESTPRI; // Lowest Priority
+    rt_low.attrs.vector = 0xff;
+
+    union IORT_H rt_high;
 
     for(int i = 0; i < 24; i++){
         /* set low part */
         *IOAPIC::IOREGSEL_REG = rt_start + (2 * i);
-        union IORT_L rt_low;
         rt_low.entry_low = *IOAPIC::IOWIN_REG;
-
-        rt_low.attrs.mask = 1; // inactive
-        rt_low.attrs.trigger_mode = 0; // Flankenstreuerung
-        rt_low.attrs.polarity = 0; // Active High
-        rt_low.attrs.destination_mode = 1; // Logical Mode
-        rt_low.attrs.delivery_mode = 1; // Lowest Priority
-        rt_low.attrs.vector = 0xff; // panic handler
         *IOAPIC::IOWIN_REG = rt_low.entry_low;
 
         /* set high part */
         *IOAPIC::IOREGSEL_REG = rt_start + (2 * i) + 1;
-        union IORT_H rt_high;
         rt_high.entry_high = *IOAPIC::IOWIN_REG;
-
         rt_high.attrs.logical_destination = 0xff; // Potentiell jede CPU ist Empfaenger
+        rt_high.attrs.reserved = 0;
         *IOAPIC::IOWIN_REG = rt_high.entry_high;
     }
-
 }
 
 void IOAPIC::config(unsigned char slot, Plugbox::Vector vector){
@@ -74,7 +74,7 @@ void IOAPIC::allow (unsigned char slot){
     DBG << "slot: " << (uint32_t) slot << endl;
     *IOAPIC::IOREGSEL_REG = rt_start + (2 * slot);
     *IOAPIC::IOWIN_REG = *IOAPIC::IOWIN_REG & 0xfffeffff;
-    CPU::enable_int(); // where to place this?
+    //CPU::enable_int(); // where to place this?
 }
 
 /* disables irqs for device connected to slot

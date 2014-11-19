@@ -22,12 +22,12 @@ void Keyboard::plugin(){
     ioapic.config(system.getIOAPICSlot(system.keyboard), plugbox.keyboard);
     // shall we call ioapic.allow(system.getIOAPICSlot(system.keyboard)) here?
     ioapic.allow(system.getIOAPICSlot(system.keyboard));
-    this->drainKeyboardBuffer();
+    drainKeyboardBuffer();
 }
 void Keyboard::trigger(){
     DBG << "kbd trig entr" << endl;
     do{
-        k = kc.key_hit();
+        k = this->key_hit();
     } while(!k.valid());
 
     if(k.ctrl() && k.alt() && (k.scancode() == Key::scan::del)){
@@ -37,6 +37,6 @@ void Keyboard::trigger(){
         kout.show(20, 0, k.ascii());
     }
 
-    //this->drainKeyboardBuffer();
+    this->drainKeyboardBuffer();
     DBG << "kbd trig lv" << endl;
 }

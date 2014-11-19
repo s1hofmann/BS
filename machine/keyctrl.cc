@@ -325,7 +325,7 @@ void Keyboard_Controller::drainKeyboardBuffer(){
     while(status & outb){
         DBG << "drain kbd buf" << endl;
         data_port.inb();
-//        status = (uint8_t) ctrl_port.inb();
+        status = (uint8_t) ctrl_port.inb();
     }
 }
 //Waits until the keyboard controller returns an ACK
