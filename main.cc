@@ -37,6 +37,8 @@ Panic panic;
 Keyboard keyboard;
 
 Spinlock global;
+Spinlock interrupt;
+
 long j = 0;
 int posX = 0;
 
@@ -86,6 +88,7 @@ extern "C" int main()
 {
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
+    ioapic.init();
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
     DBG << "Number of CPUs: " << numCPUs << endl;
     switch (type) {
@@ -105,9 +108,30 @@ extern "C" int main()
         }
     }
 
-    ioapic.init();
     keyboard.plugin();
     CPU::enable_int();
+
+    for(long i=0; ; ++i)
+    {
+        CPU::disable_int();
+        global.lock();
+        DBG << "Lock enabled, interrupts disabled" << endl;
+        //Poor mans guide to modulo
+        //if(!(i-((i/100)*100)))
+        //{
+            ++j;
+        //}
+        kout.setpos(5,5);
+        kout << j << endl;
+        kout << j*2 << endl;
+        kout << j*4 << endl;
+        kout.setpos(2,8);
+        kout << "hallo" << endl;
+        kout.setpos(20, 2);
+        kout << "test2" << " asdf" << endl;
+        global.unlock();
+        CPU::enable_int();
+    }
 
     //char cmd[128];
     //int x = 0;
@@ -195,6 +219,7 @@ extern "C" int main_ap()
     {
         CPU::disable_int();
         global.lock();
+        DBG << "Lock enabled, interrupts disabled" << endl;
         //Poor mans guide to modulo
         //if(!(i-((i/100)*100)))
         //{
@@ -212,6 +237,5 @@ extern "C" int main_ap()
         CPU::enable_int();
     }
    
-return 0;
+    return 0;
 }
-

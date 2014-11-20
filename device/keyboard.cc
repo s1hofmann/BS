@@ -2,6 +2,7 @@
 #define MAIN_WIDTH 79
 
 #include "object/debug.h"
+#include "machine/cpu.h"
 #include "keyboard.h"
 #include "machine/spinlock.h"
 
@@ -33,21 +34,22 @@ void Keyboard::plugin()
 void Keyboard::trigger()
 {
     global.lock();
-    DBG << "trigger()";
-    do
-    {
-        k = kc.key_hit();
-    } while(!(k.valid()));
+    DBG << "trigger()" << endl;
+    
+    k = kc.key_hit();
 
     if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
         kc.reboot();
     }
 
-    kout.setpos(posX,0);
-    kout << k.ascii();
-    kout.flush();
-    ++posX;
-    posX=posX%MAIN_WIDTH;
+    if(k.valid())
+    {
+        kout.setpos(posX,0);
+        kout << k.ascii();
+        kout.flush();
+        ++posX;
+        posX=posX%MAIN_WIDTH;
+    }
     global.unlock();
 }
