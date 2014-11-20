@@ -38,7 +38,10 @@ Keyboard keyboard;
 
 Spinlock global;
 
-Application app;
+Application app0;
+Application app1;
+Application app2;
+Application app3;
 
 long j = 0;
 int posX = 0;
@@ -115,7 +118,7 @@ extern "C" int main()
 
     CPU::enable_int();
 
-    app.action();
+    app0.action();
     
     return 0;
 }
@@ -134,7 +137,18 @@ extern "C" int main_ap()
     //This caused quite a mess when dealing with keyboard input in exercise 1
     CPU::enable_int();
     
-    app.action();
+    if(system.getCPUID()==1)
+    {
+        app1.action();
+    }
+    else if(system.getCPUID()==2)
+    {
+        app2.action();
+    }
+    else if(system.getCPUID()==3)
+    {
+        app3.action();
+    }
    
     return 0;
 }

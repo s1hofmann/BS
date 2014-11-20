@@ -4,11 +4,13 @@
 #include "object/debug.h"
 #include "machine/cpu.h"
 #include "keyboard.h"
+#include "machine/spinlock.h"
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
 extern CGA_Stream kout;
 extern APICSystem system;
+extern Spinlock global;
 
 extern int posX, j;
 
@@ -30,6 +32,7 @@ void Keyboard::plugin()
 
 void Keyboard::trigger()
 {
+    global.lock();
     DBG << "trigger()" << endl;
     
     k = this->key_hit();
@@ -47,4 +50,5 @@ void Keyboard::trigger()
         ++posX;
         posX=posX%MAIN_WIDTH;
     }
+    global.unlock();
 }

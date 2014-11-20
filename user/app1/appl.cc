@@ -35,20 +35,19 @@ Application::~Application()
 
 void Application::action ()
 {
+    int id = system.getCPUID();
     for(long i=0; ; ++i)
     {
         CPU::disable_int();
         global.lock();
-        DBG << "Lock enabled, interrupts disabled" << endl;
+        //DBG << "Lock enabled, interrupts disabled" << endl;
         //Poor mans guide to modulo
         //if(!(i-((i/100)*100)))
         //{
             ++j;
         //}
-        kout.setpos(5,5);
+        kout.setpos(5,4+id);
         kout << j << endl;
-        kout << j*2 << endl;
-        kout << j*4 << endl;
         kout.setpos(2,8);
         kout << "Abgabe" << endl;
         kout.setpos(20, 2);
