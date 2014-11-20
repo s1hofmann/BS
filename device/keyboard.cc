@@ -32,11 +32,11 @@ void Keyboard::trigger()
 {
     DBG << "trigger()" << endl;
     
-    k = kc.key_hit();
+    k = this->key_hit();
 
     if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
-        kc.reboot();
+        this->reboot();
     }
 
     if(k.valid())

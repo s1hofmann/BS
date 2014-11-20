@@ -17,7 +17,6 @@ public:
 
 private:
     /* data */
-    Keyboard_Controller kc;
     Key k;
 };
 

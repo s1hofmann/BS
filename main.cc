@@ -90,7 +90,7 @@ extern "C" int main()
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
 
-    //TODO: INIT STUFF
+    //INIT STUFF
     ioapic.init();
     keyboard.plugin();
 
