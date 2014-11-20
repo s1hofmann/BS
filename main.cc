@@ -37,7 +37,8 @@ Panic panic;
 Keyboard keyboard;
 
 Spinlock global;
-Spinlock interrupt;
+
+Application app;
 
 long j = 0;
 int posX = 0;
@@ -88,7 +89,11 @@ extern "C" int main()
 {
     APICSystem::SystemType type = system.getSystemType();
     unsigned int numCPUs = system.getNumberOfCPUs();
+
+    //TODO: INIT STUFF
     ioapic.init();
+    keyboard.plugin();
+
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
     DBG << "Number of CPUs: " << numCPUs << endl;
     switch (type) {
@@ -108,95 +113,9 @@ extern "C" int main()
         }
     }
 
-    keyboard.plugin();
     CPU::enable_int();
 
-    for(long i=0; ; ++i)
-    {
-        CPU::disable_int();
-        global.lock();
-        DBG << "Lock enabled, interrupts disabled" << endl;
-        //Poor mans guide to modulo
-        //if(!(i-((i/100)*100)))
-        //{
-            ++j;
-        //}
-        kout.setpos(5,5);
-        kout << j << endl;
-        kout << j*2 << endl;
-        kout << j*4 << endl;
-        kout.setpos(2,8);
-        kout << "hallo" << endl;
-        kout.setpos(20, 2);
-        kout << "test2" << " asdf" << endl;
-        global.unlock();
-        CPU::enable_int();
-    }
-
-    //char cmd[128];
-    //int x = 0;
-
-    //Keyboard_Controller kc;
-    //kc.set_repeat_rate(3, 15);
-    //Key k;
-
-    //unsigned char attribute = CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::GREEN, true);
-
-    //kout.setcolor(attribute);
-
-    //kout.setpos(0, 0);
-    //kout << "test" << endl;
-
-    //bool exit = false;
-
-    //while(!exit)
-    //{
-        //do
-        //{
-            //k = kc.key_hit();
-        //} while(!(k.valid()));
-        //kout << k.ascii();
-        //kout.flush();
-        //if(k.ascii()!='\n')
-        //{
-            //cmd[x] = k.ascii();
-            //++x;
-        //}
-        //else
-        //{
-            //if(strcmp(cmd, "cls", 3))
-            //{
-                //kout.cls(' ');
-            //}
-            //else if(strcmp(cmd, "reboot", 6))
-            //{
-                //kc.reboot();
-            //}
-            //else if(strcmp(cmd, "about", 5))
-            //{
-                //kout << "VL Betriebssysteme WS 2014/2015 shell" << endl << "Available commands:" << endl << "cls" << endl << "reboot" << endl << "about" << endl;
-            //}
-            //else
-            //{
-                //kout << "Unknown command!" << endl;
-            //}
-            //x = 0;
-        //}
-    //}
-
-    //kout << "Test        <stream result> -> <expected>" << endl;
-    //kout << "zero:       " << 0 << " -> 0" << endl;
-    //kout << "ten:        " << (10) << " -> 10" << endl;
-    //kout << "uint max:   " << ~((unsigned int)0) << " -> 4294967295" << endl;
-    //kout << "int max:    " << ~(1<<31) << " -> 2147483647" << endl;
-    //kout << "int min:    " << (1<<31) << " -> -2147483648" << endl;
-    //kout << "some int:   " << (-123456789) << " -> -123456789" << endl;
-    //kout << "some int:   " << (123456789) << " -> 123456789" << endl;
-    //kout << "binary:     " << bin << 42 << dec << " -> 0b101010" << endl;
-    //kout << "octal:      " << oct << 42 << dec << " -> 052" << endl;
-    //kout << "hex:        " << hex << 42 << dec << " -> 0x2a" << endl;
-    //kout << "pointer:    " << ((void*)(3735928559L)) << " -> 0xdeadbeef" << endl;
-    //kout << "smiley:     " << ((char)1) << endl;
+    app.action();
     
     return 0;
 }
@@ -215,27 +134,7 @@ extern "C" int main_ap()
     //This caused quite a mess when dealing with keyboard input in exercise 1
     CPU::enable_int();
     
-    for(long i=0; ; ++i)
-    {
-        CPU::disable_int();
-        global.lock();
-        DBG << "Lock enabled, interrupts disabled" << endl;
-        //Poor mans guide to modulo
-        //if(!(i-((i/100)*100)))
-        //{
-            ++j;
-        //}
-        kout.setpos(5,5);
-        kout << j << endl;
-        kout << j*2 << endl;
-        kout << j*4 << endl;
-        kout.setpos(2,8);
-        kout << "hallo" << endl;
-        kout.setpos(20, 2);
-        kout << "test2" << " asdf" << endl;
-        global.unlock();
-        CPU::enable_int();
-    }
+    app.action();
    
     return 0;
 }

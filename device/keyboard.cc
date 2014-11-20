@@ -4,9 +4,6 @@
 #include "object/debug.h"
 #include "machine/cpu.h"
 #include "keyboard.h"
-#include "machine/spinlock.h"
-
-extern Spinlock global;
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
@@ -33,7 +30,6 @@ void Keyboard::plugin()
 
 void Keyboard::trigger()
 {
-    global.lock();
     DBG << "trigger()" << endl;
     
     k = kc.key_hit();
@@ -51,5 +47,4 @@ void Keyboard::trigger()
         ++posX;
         posX=posX%MAIN_WIDTH;
     }
-    global.unlock();
 }
