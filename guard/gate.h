@@ -1,13 +1,19 @@
 #ifndef GATE_H_E0VAPSZB
 #define GATE_H_E0VAPSZB
 
-class Gate
+class Gate : public QueueEntry<Gate>
 {
 public:
     Gate() {};
-    ~Gate() {};
-    virtual void trigger()=0;
-
+    virtual ~Gate() {};
+    virtual bool prologue()=0;
+    virtual void epilogue();
+    void set_queued(){
+        // TBD
+    }
+    bool set_dequeued(){
+        // TBD
+    }
 private:
     /* data */
 };

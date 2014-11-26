@@ -23,8 +23,6 @@ extern Panic panic;
 extern Keyboard keyboard;
 extern int j;
 
-extern Spinlock global;
-
 Application::Application()
 {
 }
@@ -38,8 +36,6 @@ void Application::action ()
     int id = system.getCPUID();
     for(long i=0; ; ++i)
     {
-        CPU::disable_int();
-        global.lock();
         //DBG << "Lock enabled, interrupts disabled" << endl;
         //Poor mans guide to modulo
         //if(!(i-((i/100)*100)))
@@ -52,7 +48,5 @@ void Application::action ()
         kout << "Abgabe" << endl;
         kout.setpos(20, 2);
         kout << "Aufgabe2" << " BS WS14/15" << endl;
-        global.unlock();
-        CPU::enable_int();
     }
 }

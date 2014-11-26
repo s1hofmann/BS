@@ -30,9 +30,17 @@ void Keyboard::plugin()
     drainKeyboardBuffer();
 }
 
+void Keyboard::epilogue() {
+
+}
+
+bool Keyboard::prologue() {
+
+    return 0;
+}
+/*
 void Keyboard::trigger()
 {
-    global.lock();
     DBG << "trigger()" << endl;
     
     k = this->key_hit();
@@ -50,5 +58,5 @@ void Keyboard::trigger()
         ++posX;
         posX=posX%MAIN_WIDTH;
     }
-    global.unlock();
 }
+*/

@@ -13,7 +13,9 @@ public:
     ~Keyboard();
 
     void plugin();
-    virtual void trigger();
+    virtual bool prologue();
+    virtual void epilogue();
+//    virtual void trigger();
 
 private:
     /* data */

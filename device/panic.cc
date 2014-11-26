@@ -12,8 +12,18 @@ Panic::~Panic()
 {
 }
 
+bool Panic::prologue(){
+    kout << "Error!" << endl;
+    CPU::halt();
+}
+
+void Panic::epilogue(){
+
+}
+/*
 void Panic::trigger()
 {
     kout << "Error!" << endl;
     CPU::halt();
 }
+*/
