@@ -14,7 +14,7 @@ extern Spinlock global;
 
 extern int posX, j;
 
-Keyboard::Keyboard()
+Keyboard::Keyboard() : Gate()
 {
 }
 
@@ -30,10 +30,9 @@ void Keyboard::plugin()
     drainKeyboardBuffer();
 }
 
-void Keyboard::trigger()
+bool Keyboard::prologue()
 {
-    global.lock();
-    DBG << "trigger()" << endl;
+    DBG << "KBD prologue()" << endl;
     
     k = this->key_hit();
 
@@ -42,13 +41,22 @@ void Keyboard::trigger()
         this->reboot();
     }
 
+    //If input is valid we request an epilogue to display the input
+    return true;
+}
+
+void Keyboard::epilogue()
+{
+    //TODO: Secure section;
+    global.lock();
     if(k.valid())
     {
-        kout.setpos(posX,0);
+        //kout.setpos(posX,0);
         kout << k.ascii();
         kout.flush();
-        ++posX;
-        posX=posX%MAIN_WIDTH;
+        //++posX;
+        //posX=posX%MAIN_WIDTH;
     }
+    //TODO: Secure section;
     global.unlock();
 }

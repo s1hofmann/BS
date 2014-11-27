@@ -52,6 +52,7 @@ void Application::action ()
         kout << "Abgabe" << endl;
         kout.setpos(20, 2);
         kout << "Aufgabe2" << " BS WS14/15" << endl;
+        kout.setpos(0, 9);
         global.unlock();
         CPU::enable_int();
     }

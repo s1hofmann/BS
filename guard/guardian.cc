@@ -21,8 +21,12 @@ extern Plugbox plugbox;
  */
 void guardian(uint32_t vector)
 {
-    plugbox.report(vector)->trigger();
+    bool epilogue_val = plugbox.report(vector)->prologue();
 
+    if(epilogue_val)
+    {
+        plugbox.report(vector)->epilogue();
+    }
     lapic.ackIRQ();
 }
 

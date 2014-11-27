@@ -3,7 +3,7 @@
 
 #include "object/o_stream.h"
 
-O_Stream::O_Stream()
+O_Stream::O_Stream() : Stringbuffer()
 {
     this->base = 10;
 }

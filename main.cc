@@ -137,17 +137,17 @@ extern "C" int main_ap()
     //This caused quite a mess when dealing with keyboard input in exercise 1
     CPU::enable_int();
     
-    if(system.getCPUID()==1)
+    switch(system.getCPUID())
     {
-        app1.action();
-    }
-    else if(system.getCPUID()==2)
-    {
-        app2.action();
-    }
-    else if(system.getCPUID()==3)
-    {
-        app3.action();
+        case 1:
+            app1.action();
+            break;
+        case 2:
+            app2.action();
+            break;
+        case 3:
+            app3.action();
+            break;
     }
    
     return 0;
