@@ -8,6 +8,9 @@
 #ifndef __Guard_include__
 #define __Guard_include__
 
+#include "object/queue.h"
+#include "locker.h"
+
 /*! \brief Synchronisation des BS-Kerns mit Unterbrechungen.
  *
  *  Die Klasse Guard dient der Synchronisation zwischen "normalen"
@@ -53,15 +56,24 @@
  *	    sollen.</li>
  *    </ul>
  */
-class Guard
-     
+class Guard : public Locker
 {
 private:
     Guard (const Guard &copy); // Verhindere Kopieren
+
+    //One epilogue queue for each CPU
+    //A hardcoded number of queues is not that cool.
+    //APICSystem maybe provides a method to get the total amount of CPUs?
+    Queue epilogues[4]
 public:
     /*! \brief Konstruktor
      */
-    Guard () {}
+    Guard() : Locker() {};
+    ~Guard() {};
+    
+    void enter();
+    void leave();
+    void relay(Gate *item);
      
 };
 
