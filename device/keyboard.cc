@@ -32,11 +32,30 @@ void Keyboard::plugin()
 
 void Keyboard::epilogue() {
 
+    DBG << "epilogue()" << endl;
+
+    if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
+    {
+        this->reboot();
+    }
+
+    if(k.valid())
+    {
+        kout.setpos(posX,0);
+        kout << k.ascii();
+        kout.flush();
+        ++posX;
+        posX=posX%MAIN_WIDTH;
+    }
 }
 
 bool Keyboard::prologue() {
 
-    return 0;
+    DBG << "prologue()" << endl;
+
+    k = this->key_hit();
+
+    return 1;
 }
 /*
 void Keyboard::trigger()

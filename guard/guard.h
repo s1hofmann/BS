@@ -8,6 +8,7 @@
 #include "locker.h"
 #include "guard/gate.h"
 #include "object/queue.h"
+#include "machine/spinlock.h"
 
 #ifndef __Guard_include__
 #define __Guard_include__
@@ -62,6 +63,7 @@ class Guard : public Locker
 private:
     Guard (const Guard &copy); // Verhindere Kopieren
     Queue<Gate> queue[4];
+    Spinlock guardlock;
 public:
     /*! \brief Konstruktor
      */

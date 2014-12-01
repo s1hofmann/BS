@@ -56,6 +56,7 @@ public:
      *  ansonsten \b false.
      */
     bool avail() const {
+        // TODO: state accross cpus or just for the current one?
         return !(this->lock);
     }
     

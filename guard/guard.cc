@@ -2,30 +2,46 @@
 // vim: set et ts=4 sw=4:
 
 #include "guard/guard.h"
+#include "machine/cpu.h"
 #include "machine/apicsystem.h"
 #include "machine/spinlock.h"
+#define DEBUG
+#include "object/debug.h"
 
 // remember to lock critical sections against other cpus
-Spinlock guardlock;
+Guard globalGuard;
+
 extern APICSystem system;
 
 void Guard::enter(){
-    guardlock.lock();
+    DBG << "enter" << endl;
+    this->guardlock.lock();
     // wait actively
     while(!this->avail()){};
     this->Locker::enter();
-    guardlock.unlock();
 }
 
 void Guard::leave(){
-    guardlock.lock();
+    DBG << "leave" << endl;
+
+    // check queue
+    CPU::disable_int();
+    while(Gate* g = this->queue[system.getCPUID()].dequeue()){
+       g->epilogue();
+       g->set_dequeued();
+    }
+    CPU::enable_int();
+
     this->Locker::retne();
-    guardlock.unlock();
+    this->guardlock.unlock();
 }
 
 void Guard::relay(Gate *item){
-    guardlock.lock();
+    DBG << "relay" << endl;
+    // TODO: How to start execution directly on E1/2 if free?
+
     //assert 0 <= CPUID < 4
-    this->queue[system.getCPUID()].enqueue(item);
-    guardlock.unlock();
+    if(item->set_queued()){
+        this->queue[system.getCPUID()].enqueue(item);
+     }
 }
