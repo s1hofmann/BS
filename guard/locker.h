@@ -1,4 +1,3 @@
-
 // vim: set et ts=4 sw=4:
 
 /*! \file
@@ -28,7 +27,7 @@ private:
     Locker(const Locker &copy); // Verhindere Kopieren
 
     //Same as in Guard, hardcoding the number of locks is not cool!
-    char locks[4];
+    char locks[CPU_MAX];
      
 public:
     /*! \brief Konstruktor: Initialisiert die Sperrvariable so, dass der
@@ -36,9 +35,9 @@ public:
      */
     Locker()
     {
-        for(int i=0; i<4; ++i)
+        for(int i=0; i<CPU_MAX; ++i)
         {
-            locke[i] = 0;
+            locks[i] = 0;
         }
     };
 
@@ -47,11 +46,11 @@ public:
     /*! \brief Diese Methode muss aufgerufen werden, wenn der kritische
      *  Abschnitt betreten wird.
      */
-    void enter() {__sync_lock_test_and_set(&locks[system.getCPUID()], 1);}
+    void enter() {locks[system.getCPUID()] = 1;}
     
     /*! \brief Mit dieser Methode wird der kritische Abschnitt wieder verlassen.
      */
-    void retne() {__sync_lock_release(&locks[system.getCPUID()]);}
+    void retne() {locks[system.getCPUID()] = 0;}
 
     /*! \brief Diese Methode gibt an, ob der kritische Abschnitt frei ist.
      *  \return Gibt \b true zurück, falls der kritische Abschnitt frei ist,

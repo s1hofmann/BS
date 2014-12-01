@@ -9,7 +9,11 @@
 #define __Guard_include__
 
 #include "object/queue.h"
+#include "object/queueentry.h"
+#include "machine/apicsystem.h"
+#include "gate.h"
 #include "locker.h"
+#include "machine/spinlock.h"
 
 /*! \brief Synchronisation des BS-Kerns mit Unterbrechungen.
  *
@@ -64,11 +68,14 @@ private:
     //One epilogue queue for each CPU
     //A hardcoded number of queues is not that cool.
     //APICSystem maybe provides a method to get the total amount of CPUs?
-    Queue epilogues[4]
+    Queue<Gate> epilogues[CPU_MAX];
+
+    Spinlock queue_lock;
+    Spinlock guard_lock;
 public:
     /*! \brief Konstruktor
      */
-    Guard() : Locker() {};
+    Guard() : Locker() {queue_lock.unlock(); guard_lock.unlock();};
     ~Guard() {};
     
     void enter();

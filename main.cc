@@ -8,14 +8,13 @@
 
 /* INCLUDES */
 
-#define DEBUG 1
+#define DEBUG
 
 #include "machine/apicsystem.h"
 #include "machine/cgascr.h"
 #include "machine/keyctrl.h"
 #include "machine/ioapic.h"
 #include "machine/cpu.h"
-#include "machine/spinlock.h"
 
 #include "object/debug.h"
 #include "object/o_stream.h"
@@ -23,6 +22,8 @@
 #include "device/cgastr.h"
 #include "device/panic.h"
 #include "device/keyboard.h"
+
+#include "guard/guard.h"
 
 #include "user/app1/appl.h"
 
@@ -36,7 +37,7 @@ Plugbox plugbox;
 Panic panic;
 Keyboard keyboard;
 
-Spinlock global;
+Guard guard;
 
 Application app0;
 Application app1;

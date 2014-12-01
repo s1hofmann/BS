@@ -5,6 +5,7 @@
 #include "machine/cpu.h"
 #include "keyboard.h"
 #include "machine/spinlock.h"
+#include "guard/secure.h"
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
@@ -47,16 +48,15 @@ bool Keyboard::prologue()
 
 void Keyboard::epilogue()
 {
-    //TODO: Secure section;
-    global.lock();
+    DBG << "KBD epilogue()" << endl;
+    Secure section;
+    DBG << "inside secure section" << endl;
     if(k.valid())
     {
-        //kout.setpos(posX,0);
+        kout.setpos(posX,0);
         kout << k.ascii();
         kout.flush();
-        //++posX;
-        //posX=posX%MAIN_WIDTH;
+        ++posX;
+        posX=posX%MAIN_WIDTH;
     }
-    //TODO: Secure section;
-    global.unlock();
 }

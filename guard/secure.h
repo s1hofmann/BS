@@ -1,4 +1,3 @@
-
 // vim: set et ts=4 sw=4:
 
 /*! \file
@@ -8,7 +7,14 @@
 #ifndef __Secure_include__
 #define __Secure_include__
 
-/*! \brief Die Klasse Secure dient dem bequemen Schutz kritischer Abschnitte.
+#define DEBUG
+
+#include "object/debug.h"
+#include "guard.h"
+
+extern Guard guard;
+
+/*! \briefsecure.hsse Secure dient dem bequemen Schutz kritischer Abschnitte.
  *
  *  Dabei wird die Tatsache ausgenutzt, dass der C++ Compiler für jedes Objekt
  *  automatisch Konstruktor- und Destruktoraufrufe in den Code einbaut und dass
@@ -33,7 +39,10 @@ class Secure
 {
 private:
     Secure(const Secure &copy); // Verhindere Kopieren
-     
+
+public:
+    Secure() {guard.enter();};
+    ~Secure() {guard.leave();};
 };
 
 #endif

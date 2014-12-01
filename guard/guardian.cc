@@ -4,15 +4,24 @@
 /*! \file
  *  \brief Low-Level Interrupt-Behandlung
  */
+
+#define DEBUG
+
 #include "types.h"
+
 #include "machine/lapic.h"
-#include "object/debug.h"
 #include "machine/plugbox.h"
+#include "machine/cpu.h"
+
+#include "object/debug.h"
+
+#include "guard/guard.h"
 
 extern "C" void guardian(uint32_t vector);
 
 extern LAPIC lapic;
 extern Plugbox plugbox;
+extern Guard guard;
 
 /*! \brief Low-Level Interrupt-Behandlung.
  *
@@ -25,7 +34,9 @@ void guardian(uint32_t vector)
 
     if(epilogue_val)
     {
-        plugbox.report(vector)->epilogue();
+        guard.relay(plugbox.report(vector));
+        DBG << "after relay" << endl;
+        CPU::enable_int();
     }
     lapic.ackIRQ();
 }

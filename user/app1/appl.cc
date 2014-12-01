@@ -4,13 +4,18 @@
 #define DEBUG
 
 #include "user/app1/appl.h"
-#include "machine/spinlock.h"
+
 #include "device/cgastr.h"
 #include "device/panic.h"
 #include "device/keyboard.h"
+
+#include "guard/guard.h"
+#include "guard/secure.h"
+
 #include "machine/ioapic.h"
 #include "machine/cpu.h"
 #include "machine/spinlock.h"
+
 #include "object/debug.h"
 
 extern CGA_Stream kout;
@@ -22,8 +27,6 @@ extern CGA_Stream dout_CPU3;
 extern Panic panic;
 extern Keyboard keyboard;
 extern int j;
-
-extern Spinlock global;
 
 Application::Application()
 {
@@ -38,14 +41,10 @@ void Application::action ()
     int id = system.getCPUID();
     for(long i=0; ; ++i)
     {
-        CPU::disable_int();
-        global.lock();
-        //DBG << "Lock enabled, interrupts disabled" << endl;
-        //Poor mans guide to modulo
-        //if(!(i-((i/100)*100)))
-        //{
-            ++j;
-        //}
+        Secure section;
+        
+        ++j;
+
         kout.setpos(5,4+id);
         kout << j << endl;
         kout.setpos(2,8);
@@ -53,7 +52,5 @@ void Application::action ()
         kout.setpos(20, 2);
         kout << "Aufgabe2" << " BS WS14/15" << endl;
         kout.setpos(0, 9);
-        global.unlock();
-        CPU::enable_int();
     }
 }
