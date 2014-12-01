@@ -6,6 +6,9 @@
  */
 
 #include "locker.h"
+#include "guard/gate.h"
+#include "object/queue.h"
+
 #ifndef __Guard_include__
 #define __Guard_include__
 /*! \brief Synchronisation des BS-Kerns mit Unterbrechungen.
@@ -58,13 +61,14 @@ class Guard : public Locker
 {
 private:
     Guard (const Guard &copy); // Verhindere Kopieren
+    Queue<Gate> queue[4];
 public:
     /*! \brief Konstruktor
      */
     Guard () {}
     void enter();
     void leave();
-    void relay(Gate *item);     
+    void relay(Gate *item);
 };
 
 #endif

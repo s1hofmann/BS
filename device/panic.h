@@ -6,11 +6,8 @@
 class Panic : public Gate
 {
 public:
-    Panic ();
-    virtual ~Panic ();
 
     bool prologue();
-    void epilogue();
 
 private:
     /* data */

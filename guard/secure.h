@@ -29,11 +29,15 @@
     // Ende des kritischen Abschnitts
     \endverbatim
  */
+
+
 class Secure
 {
 private:
     Secure(const Secure &copy); // Verhindere Kopieren
-     
+public:
+    Secure(){ /* lock? */ }
+    ~Secure(){ /* unlock? */ }
 };
 
 #endif

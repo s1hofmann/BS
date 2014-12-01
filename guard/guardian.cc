@@ -21,8 +21,9 @@ extern Plugbox plugbox;
  */
 void guardian(uint32_t vector)
 {
-    plugbox.report(vector)->trigger();
+    plugbox.report(vector)->prologue();
 
     lapic.ackIRQ();
+    // enable irqs after switching/relaying to E1/2
 }
 
