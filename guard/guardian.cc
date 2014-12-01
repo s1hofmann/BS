@@ -35,9 +35,7 @@ void guardian(uint32_t vector)
     if(epilogue_val)
     {
         guard.relay(plugbox.report(vector));
-        DBG << "after relay" << endl;
         CPU::enable_int();
     }
     lapic.ackIRQ();
 }
-

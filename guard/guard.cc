@@ -9,35 +9,48 @@
 
 void Guard::enter()
 {
+    guard_lock.lock();
     //Wait for lock
     while(!avail())
     {
     }
     Locker::enter();
-    guard_lock.lock();
 }
 
 void Guard::leave()
 {
-    guard_lock.unlock();
-    Locker::retne();
     //Process epilogue_queue
     CPU::disable_int();
     while(Gate *next = epilogues[system.getCPUID()].dequeue())
     {
         //An epilogoue should be interruptable
         CPU::enable_int();
-        next->epilogue();
         next->set_dequeued();
+        next->epilogue();
         CPU::disable_int();
     }
     CPU::enable_int();
+    guard_lock.unlock();
+    Locker::retne();
 }
 
 void Guard::relay(Gate *item)
 {
-    if(item->set_queued())
+    if(avail())
     {
-        epilogues[system.getCPUID()].enqueue(item);
+        Locker::enter();
+        guard_lock.lock();
+        item->epilogue();
+        guard_lock.unlock();
+        Locker::retne();
+    }
+    else
+    {
+        if(item->set_queued())
+        {
+            CPU::disable_int();
+            epilogues[system.getCPUID()].enqueue(item);
+            CPU::enable_int();
+        }
     }
 }

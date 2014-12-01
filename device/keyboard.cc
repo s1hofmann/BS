@@ -33,7 +33,7 @@ void Keyboard::plugin()
 
 bool Keyboard::prologue()
 {
-    DBG << "KBD prologue()" << endl;
+    //DBG << "KBD prologue()" << endl;
     
     k = this->key_hit();
 
@@ -48,9 +48,7 @@ bool Keyboard::prologue()
 
 void Keyboard::epilogue()
 {
-    DBG << "KBD epilogue()" << endl;
-    Secure section;
-    DBG << "inside secure section" << endl;
+    //DBG << "KBD epilogue()" << endl;
     if(k.valid())
     {
         kout.setpos(posX,0);

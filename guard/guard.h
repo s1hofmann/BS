@@ -71,6 +71,7 @@ private:
     Queue<Gate> epilogues[CPU_MAX];
 
     Spinlock guard_lock;
+    Spinlock relay_lock;
 public:
     /*! \brief Konstruktor
      */
