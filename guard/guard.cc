@@ -36,10 +36,8 @@ void Guard::leave()
 
 void Guard::relay(Gate *item)
 {
-    queue_lock.lock();
     if(item->set_queued())
     {
         epilogues[system.getCPUID()].enqueue(item);
     }
-    queue_lock.unlock();
 }

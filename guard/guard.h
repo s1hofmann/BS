@@ -70,12 +70,11 @@ private:
     //APICSystem maybe provides a method to get the total amount of CPUs?
     Queue<Gate> epilogues[CPU_MAX];
 
-    Spinlock queue_lock;
     Spinlock guard_lock;
 public:
     /*! \brief Konstruktor
      */
-    Guard() : Locker() {queue_lock.unlock(); guard_lock.unlock();};
+    Guard() : Locker() {guard_lock.unlock();};
     ~Guard() {};
     
     void enter();
