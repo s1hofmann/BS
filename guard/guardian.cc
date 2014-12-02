@@ -37,6 +37,5 @@ void guardian(uint32_t vector)
     if(epilogue_val)
     {
         guard.relay(plugbox.report(vector));
-        CPU::enable_int();
     }
 }

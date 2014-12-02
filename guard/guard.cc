@@ -32,9 +32,9 @@ void Guard::leave()
         next->epilogue();
         CPU::disable_int();
     }
-    CPU::enable_int();
-    guard_lock.unlock();
     Locker::retne();
+    guard_lock.unlock();
+    CPU::enable_int();
 }
 
 void Guard::relay(Gate *item)
@@ -45,6 +45,7 @@ void Guard::relay(Gate *item)
     {
         DBG << "relay run" << endl;
         enter();
+        CPU::enable_int();
         item->epilogue();
         leave();
     }
@@ -53,7 +54,6 @@ void Guard::relay(Gate *item)
     {
         if(item->set_queued())
         {
-            CPU::disable_int();
             DBG << "relay enqueue" << endl;
             epilogues[system.getCPUID()].enqueue(item);
             CPU::enable_int();
