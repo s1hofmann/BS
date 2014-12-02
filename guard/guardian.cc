@@ -32,10 +32,11 @@ void guardian(uint32_t vector)
 {
     bool epilogue_val = plugbox.report(vector)->prologue();
 
+    lapic.ackIRQ();
+
     if(epilogue_val)
     {
         guard.relay(plugbox.report(vector));
         CPU::enable_int();
     }
-    lapic.ackIRQ();
 }
