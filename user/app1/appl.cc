@@ -39,20 +39,23 @@ void Application::action ()
     int id = system.getCPUID();
     for(long i=0; ; ++i)
     {
-        globalGuard.enter();
         //DBG << "Lock enabled, interrupts disabled" << endl;
         //Poor mans guide to modulo
         //if(!(i-((i/100)*100)))
         //{
+        globalGuard.enter();
             ++j;
         //}
 
         kout.setpos(5,4+id);
         kout << j << endl;
+
         kout.setpos(2,8);
         kout << "Abgabe" << endl;
+
         kout.setpos(20, 2);
         kout << "Aufgabe2" << " BS WS14/15" << endl;
+
         globalGuard.leave();
     }
 }

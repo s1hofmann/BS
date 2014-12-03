@@ -8,27 +8,28 @@
 #define DEBUG
 #include "object/debug.h"
 
-// remember to lock critical sections against other cpus
 Guard globalGuard;
 
 extern APICSystem system;
 
 void Guard::enter(){
-    DBG << "enter" << endl;
+    //DBG << "enter" << endl;
+    this->Locker::enter();
     this->guardlock.lock();
     // wait actively
-    while(!this->avail()){};
-    this->Locker::enter();
+    // while(!this->avail()){}; // according to tim&cuong not needed
 }
 
 void Guard::leave(){
-    DBG << "leave" << endl;
+    //DBG << "leave" << endl;
 
     // check queue
     CPU::disable_int();
     while(Gate* g = this->queue[system.getCPUID()].dequeue()){
-       g->epilogue();
-       g->set_dequeued();
+        CPU::enable_int();
+        g->epilogue();
+        CPU::disable_int();
+        g->set_dequeued();
     }
     CPU::enable_int();
 
@@ -37,11 +38,22 @@ void Guard::leave(){
 }
 
 void Guard::relay(Gate *item){
-    DBG << "relay" << endl;
-    // TODO: How to start execution directly on E1/2 if free?
+    //DBG << "relay" << endl;
+    if(avail()){
+        this->Locker::enter();
+        this->guardlock.lock();
 
-    //assert 0 <= CPUID < 4
-    if(item->set_queued()){
-        this->queue[system.getCPUID()].enqueue(item);
-     }
+        CPU::enable_int();
+        item->epilogue();
+
+        this->guardlock.unlock();
+        this->Locker::retne();
+
+    } else { //assert 0 <= CPUID < 4
+        if (item->set_queued()){
+            this->queue[system.getCPUID()].enqueue(item);
+        } else {
+            DBG << "lost" << endl;
+        }
+    }
 }

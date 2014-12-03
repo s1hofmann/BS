@@ -9,6 +9,7 @@
 #include "object/debug.h"
 #include "machine/plugbox.h"
 #include "guard/guard.h"
+#include "machine/cpu.h"
 
 extern Guard globalGuard;
 extern "C" void guardian(uint32_t vector);
@@ -26,12 +27,12 @@ void guardian(uint32_t vector)
 
 
     Gate* g = plugbox.report(vector);
+    lapic.ackIRQ(); // tell local apic that we got the irq
     if(g->prologue()){
         /* relay or enqueue */
             // TODO: make sure that the same Gate object is not relayed twice
             globalGuard.relay(g);
     }
 
-    lapic.ackIRQ(); // tell local apic that we got the irq
 }
 

@@ -27,13 +27,18 @@ class Locker
 private:
     Locker(const Locker &copy); // Verhindere Kopieren
     uint32_t lock; // enough space for 32 CPUs
+    bool blocked[4];
 public:
     /*! \brief Konstruktor: Initialisiert die Sperrvariable so, dass der
      *  kritische Abschnitt als frei markiert wird.
      */
      Locker(){
-        this->lock = 0;
-    }
+        blocked[0] = false;
+        blocked[1] = false;
+        blocked[2] = false;
+        blocked[3] = false;
+     }
+
     /*! \brief Diese Methode muss aufgerufen werden, wenn der kritische
      *  Abschnitt betreten wird.
      */
@@ -41,7 +46,8 @@ public:
         // assert CPUID >= 0
         // assert CPUID <= 31
         // this is going to break if CPUID < 0
-        this->lock ^= 1 << system.getCPUID();
+        // this->lock ^= 1 << system.getCPUID();
+        blocked[system.getCPUID()] = true;
     }
     /*! \brief Mit dieser Methode wird der kritische Abschnitt wieder verlassen.
      */
@@ -49,7 +55,8 @@ public:
         // assert CPUID >= 0
         // assert CPUID <= 31
         // this is going to break if CPUID < 0
-        this->lock ^= 1 << system.getCPUID();
+        //this->lock ^= 1 << system.getCPUID();
+        blocked[system.getCPUID()] = false;
     }
     /*! \brief Diese Methode gibt an, ob der kritische Abschnitt frei ist.
      *  \return Gibt \b true zurück, falls der kritische Abschnitt frei ist,
@@ -57,7 +64,8 @@ public:
      */
     bool avail() const {
         // TODO: state accross cpus or just for the current one?
-        return !(this->lock);
+        //return !(this->lock);
+        return !blocked[system.getCPUID()];
     }
     
 };
