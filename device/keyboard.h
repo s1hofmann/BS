@@ -20,6 +20,7 @@ public:
 private:
     /* data */
     Key k;
+
 };
 
 #endif /* end of include guard: KEYBOARD_H_MWKYFDLH */

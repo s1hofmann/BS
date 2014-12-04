@@ -5,6 +5,7 @@
  *  \brief Diese Datei enthält die Klasse Secure.
  */
 
+#include "guard/guard.h"
 #ifndef __Secure_include__
 #define __Secure_include__
 
@@ -30,14 +31,15 @@
     \endverbatim
  */
 
+extern Guard globalGuard;
 
 class Secure
 {
 private:
     Secure(const Secure &copy); // Verhindere Kopieren
 public:
-    Secure(){ /* lock? */ }
-    ~Secure(){ /* unlock? */ }
+    Secure(){ globalGuard.enter(); }
+    ~Secure(){ globalGuard.leave(); }
 };
 
 #endif

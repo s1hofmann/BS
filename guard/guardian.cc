@@ -27,12 +27,14 @@ void guardian(uint32_t vector)
 
 
     Gate* g = plugbox.report(vector);
-    lapic.ackIRQ(); // tell local apic that we got the irq
     if(g->prologue()){
         /* relay or enqueue */
-            // TODO: make sure that the same Gate object is not relayed twice
-            globalGuard.relay(g);
-    }
 
+    	lapic.ackIRQ(); // tell local apic that we got the irq
+        globalGuard.relay(g);
+    } else {
+
+    	lapic.ackIRQ(); // tell local apic that we got the irq
+	}
 }
 

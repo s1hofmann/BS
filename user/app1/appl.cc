@@ -13,6 +13,7 @@
 #include "machine/spinlock.h"
 #include "object/debug.h"
 #include "guard/guard.h"
+#include "guard/secure.h"
 
 extern CGA_Stream kout;
 extern CGA_Stream dout_CPU0;
@@ -39,11 +40,11 @@ void Application::action ()
     int id = system.getCPUID();
     for(long i=0; ; ++i)
     {
+	Secure s;
         //DBG << "Lock enabled, interrupts disabled" << endl;
         //Poor mans guide to modulo
         //if(!(i-((i/100)*100)))
         //{
-        globalGuard.enter();
             ++j;
         //}
 
@@ -56,6 +57,5 @@ void Application::action ()
         kout.setpos(20, 2);
         kout << "Aufgabe2" << " BS WS14/15" << endl;
 
-        globalGuard.leave();
     }
 }

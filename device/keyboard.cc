@@ -40,10 +40,12 @@ void Keyboard::epilogue() {
     }
 
     kout.setpos(posX,0);
-    kout << k.ascii();
+    kout << this->k.ascii();
+    k.invalidate();
     kout.flush();
     ++posX;
     posX=posX%MAIN_WIDTH;
+    if(posX == 0){ kout.cls(' '); }
 }
 
 bool Keyboard::prologue() {
@@ -54,8 +56,8 @@ bool Keyboard::prologue() {
 
     bool valid = localk.valid();
 
-    if(valid){
-        k = localk;
+    if(valid && !k.valid()){ // k.valid semantics: value consumed, producer go on
+        this->k = localk;
     }
 
     return valid;
