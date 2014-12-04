@@ -5,6 +5,7 @@
  *  \brief Diese Datei enthält die Klasse Guard.
  */
 
+<<<<<<< HEAD
 #ifndef __Guard_include__
 #define __Guard_include__
 
@@ -15,6 +16,15 @@
 #include "locker.h"
 #include "machine/spinlock.h"
 
+=======
+#include "locker.h"
+#include "guard/gate.h"
+#include "object/queue.h"
+#include "machine/spinlock.h"
+
+#ifndef __Guard_include__
+#define __Guard_include__
+>>>>>>> testing_marcel_a3
 /*! \brief Synchronisation des BS-Kerns mit Unterbrechungen.
  *
  *  Die Klasse Guard dient der Synchronisation zwischen "normalen"
@@ -61,6 +71,7 @@
  *    </ul>
  */
 class Guard : public Locker
+<<<<<<< HEAD
 {
 private:
     Guard (const Guard &copy); // Verhindere Kopieren
@@ -82,6 +93,21 @@ public:
     void leave();
     void relay(Gate *item);
      
+=======
+     
+{
+private:
+    Guard (const Guard &copy); // Verhindere Kopieren
+    Queue<Gate> queue[4];
+    Spinlock guardlock;
+public:
+    /*! \brief Konstruktor
+     */
+    Guard () {}
+    void enter();
+    void leave();
+    void relay(Gate *item);
+>>>>>>> testing_marcel_a3
 };
 
 #endif

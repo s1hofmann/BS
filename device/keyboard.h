@@ -13,13 +13,20 @@ public:
     ~Keyboard();
 
     void plugin();
+<<<<<<< HEAD
     
     virtual bool prologue();
     virtual void epilogue();
+=======
+    virtual bool prologue();
+    virtual void epilogue();
+//    virtual void trigger();
+>>>>>>> testing_marcel_a3
 
 private:
     /* data */
     Key k;
+
 };
 
 #endif /* end of include guard: KEYBOARD_H_MWKYFDLH */

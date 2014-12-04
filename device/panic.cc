@@ -1,9 +1,12 @@
+#define DEBUG
+#include "object/debug.h"
 #include "panic.h"
 #include "device/cgastr.h"
 #include "machine/cpu.h"
 
-extern CGA_Stream kout;
+bool Panic::prologue(){
 
+<<<<<<< HEAD
 Panic::Panic () : Gate()
 {
 }
@@ -22,4 +25,10 @@ bool Panic::prologue()
 
 void Panic::epilogue()
 {
+=======
+    DBG << "Error!" << endl;
+    CPU::halt();
+
+    return false;
+>>>>>>> testing_marcel_a3
 }

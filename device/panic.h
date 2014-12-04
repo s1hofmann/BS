@@ -6,11 +6,13 @@
 class Panic : public Gate
 {
 public:
-    Panic ();
-    virtual ~Panic ();
 
+<<<<<<< HEAD
     virtual bool prologue();
     virtual void epilogue();
+=======
+    bool prologue();
+>>>>>>> testing_marcel_a3
 
 private:
     /* data */

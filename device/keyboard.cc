@@ -31,9 +31,48 @@ void Keyboard::plugin()
     drainKeyboardBuffer();
 }
 
+<<<<<<< HEAD
 bool Keyboard::prologue()
 {
     //DBG << "KBD prologue()" << endl;
+=======
+void Keyboard::epilogue() {
+
+//    DBG << "epilogue()" << endl;
+
+    if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
+    {
+        this->reboot();
+    }
+
+    kout.setpos(posX,0);
+    kout << this->k.ascii();
+    k.invalidate();
+    kout.flush();
+    ++posX;
+    posX=posX%MAIN_WIDTH;
+    if(posX == 0){ kout.cls(' '); }
+}
+
+bool Keyboard::prologue() {
+
+ //   DBG << "prologue()" << endl;
+
+    Key localk = this->key_hit();
+
+    bool valid = localk.valid();
+
+    if(valid && !k.valid()){ // k.valid semantics: value consumed, producer go on
+        this->k = localk;
+    }
+
+    return valid;
+}
+/*
+void Keyboard::trigger()
+{
+    DBG << "trigger()" << endl;
+>>>>>>> testing_marcel_a3
     
     k = this->key_hit();
 
@@ -58,3 +97,4 @@ void Keyboard::epilogue()
         posX=posX%MAIN_WIDTH;
     }
 }
+*/
