@@ -26,6 +26,7 @@ extern CGA_Stream dout_CPU3;
 
 extern Panic panic;
 extern Keyboard keyboard;
+
 extern int j;
 
 Application::Application()
@@ -43,14 +44,21 @@ void Application::action ()
     {
         Secure section;
         
-        ++j;
+        //DBG << "Lock enabled, interrupts disabled" << endl;
+        //Poor mans guide to modulo
+        //if(!(i-((i/100)*100)))
+        //{
+            ++j;
+        //}
 
         kout.setpos(5,4+id);
         kout << j << endl;
+
         kout.setpos(2,8);
         kout << "Abgabe" << endl;
+
         kout.setpos(20, 2);
-        kout << "Aufgabe2" << " BS WS14/15" << endl;
+        kout << "Aufgabe3" << " BS WS14/15" << endl;
         kout.setpos(0, 9);
     }
 }

@@ -68,20 +68,18 @@ private:
     //One epilogue queue for each CPU
     //A hardcoded number of queues is not that cool.
     //APICSystem maybe provides a method to get the total amount of CPUs?
-    Queue<Gate> epilogues[CPU_MAX];
+    Queue<Gate> queue[CPU_MAX];
 
-    Spinlock queue_lock;
-    Spinlock guard_lock;
+    Spinlock guardlock;
 public:
     /*! \brief Konstruktor
      */
-    Guard() : Locker() {queue_lock.unlock(); guard_lock.unlock();};
+    Guard() : Locker() {guardlock.unlock();};
     ~Guard() {};
     
     void enter();
     void leave();
     void relay(Gate *item);
-     
 };
 
 #endif

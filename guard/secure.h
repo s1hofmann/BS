@@ -14,7 +14,7 @@
 
 extern Guard guard;
 
-/*! \briefsecure.hsse Secure dient dem bequemen Schutz kritischer Abschnitte.
+/*! \brief Die Klasse Secure dient dem bequemen Schutz kritischer Abschnitte.
  *
  *  Dabei wird die Tatsache ausgenutzt, dass der C++ Compiler für jedes Objekt
  *  automatisch Konstruktor- und Destruktoraufrufe in den Code einbaut und dass
@@ -35,6 +35,7 @@ extern Guard guard;
     // Ende des kritischen Abschnitts
     \endverbatim
  */
+
 class Secure
 {
 private:

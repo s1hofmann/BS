@@ -5,7 +5,6 @@
 #include "machine/cpu.h"
 #include "keyboard.h"
 #include "machine/spinlock.h"
-#include "guard/secure.h"
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
@@ -15,7 +14,7 @@ extern Spinlock global;
 
 extern int posX, j;
 
-Keyboard::Keyboard() : Gate()
+Keyboard::Keyboard()
 {
 }
 
@@ -31,32 +30,35 @@ void Keyboard::plugin()
     drainKeyboardBuffer();
 }
 
-bool Keyboard::prologue()
-{
-    DBG << "KBD prologue()" << endl;
-    
-    k = this->key_hit();
+void Keyboard::epilogue() {
+
+//    DBG << "epilogue()" << endl;
 
     if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
         this->reboot();
     }
 
-    //If input is valid we request an epilogue to display the input
-    return true;
+    kout.setpos(posX,0);
+    kout << this->k.ascii();
+    k.invalidate();
+    kout.flush();
+    ++posX;
+    posX=posX%MAIN_WIDTH;
+    if(posX == 0){ kout.cls(' '); }
 }
 
-void Keyboard::epilogue()
-{
-    DBG << "KBD epilogue()" << endl;
-    Secure section;
-    DBG << "inside secure section" << endl;
-    if(k.valid())
-    {
-        kout.setpos(posX,0);
-        kout << k.ascii();
-        kout.flush();
-        ++posX;
-        posX=posX%MAIN_WIDTH;
+bool Keyboard::prologue() {
+
+ //   DBG << "prologue()" << endl;
+
+    Key localk = this->key_hit();
+
+    bool valid = localk.valid();
+
+    if(valid && !k.valid()){ // k.valid semantics: value consumed, producer go on
+        this->k = localk;
     }
+
+    return valid;
 }

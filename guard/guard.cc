@@ -6,40 +6,64 @@
 #include "object/debug.h"
 #include "guard.h"
 #include "machine/cpu.h"
+#include "machine/spinlock.h"
+#include "machine/apicsystem.h"
 
-void Guard::enter()
-{
-    //Wait for lock
-    while(!avail())
-    {
-    }
-    Locker::enter();
-    guard_lock.lock();
+extern APICSystem system;
+
+void Guard::enter(){
+    //DBG << "enter" << endl;
+
+    /* stupid: note on order: vice-versa potentially 4 cpus are on E1/2 at the same time
+       this would block epilogues in irqs from beeing executed directly  */
+    /* more important: consider deadlocks! */
+    this->Locker::enter();
+    this->guardlock.lock();
+
 }
 
-void Guard::leave()
-{
-    guard_lock.unlock();
-    Locker::retne();
-    //Process epilogue_queue
+void Guard::leave(){
+    //DBG << "leave" << endl;
+
+    // check queue
     CPU::disable_int();
-    while(Gate *next = epilogues[system.getCPUID()].dequeue())
-    {
-        //An epilogoue should be interruptable
+    while(Gate* g = this->queue[system.getCPUID()].dequeue()){
+        g->set_dequeued();
         CPU::enable_int();
-        next->epilogue();
-        next->set_dequeued();
+        g->epilogue();
         CPU::disable_int();
     }
+
+
+    /* note on order: vice-versa deadlock occurs
+     * scenario: cpuX calls retne, cpuX irq occurs, waits for its own lock
+     */
+    // LOST WAKEUP: dequeu and next two statements are ONE critical section
+    this->guardlock.unlock();
+    this->Locker::retne();
     CPU::enable_int();
 }
 
-void Guard::relay(Gate *item)
-{
-    queue_lock.lock();
-    if(item->set_queued())
-    {
-        epilogues[system.getCPUID()].enqueue(item);
+void Guard::relay(Gate *item){
+    //DBG << "relay" << endl;
+    if(this->avail()){ // avail() == queue empty?
+        DBG << "epilogue directly" << endl;
+        this->Locker::enter();
+	// not after lock(): do not wait for locks on E1
+        CPU::enable_int();
+        this->guardlock.lock();
+
+        item->epilogue();
+
+        this->guardlock.unlock();
+        this->Locker::retne();
+
+    } else { //assert 0 <= CPUID < 4
+        if (item->set_queued()){
+            DBG << "queued" << endl;
+            this->queue[system.getCPUID()].enqueue(item);
+        } else {
+            DBG << "lost" << endl;
+        }
     }
-    queue_lock.unlock();
 }

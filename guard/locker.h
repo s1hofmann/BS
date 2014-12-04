@@ -8,6 +8,7 @@
 #define __Locker_include__
 
 #include "machine/apicsystem.h"
+#include "types.h"
 
 /*! \brief Die Klasse Locker dient dem Schutz kritischer Abschnitte.
  *
@@ -20,15 +21,12 @@
  */
 
 extern APICSystem system;
-
 class Locker
 {
 private:
     Locker(const Locker &copy); // Verhindere Kopieren
-
-    //Same as in Guard, hardcoding the number of locks is not cool!
-    char locks[CPU_MAX];
-     
+    uint32_t lock; // enough space for 32 CPUs
+    bool blocked[CPU_MAX];
 public:
     /*! \brief Konstruktor: Initialisiert die Sperrvariable so, dass der
      *  kritische Abschnitt als frei markiert wird.
@@ -37,7 +35,7 @@ public:
     {
         for(int i=0; i<CPU_MAX; ++i)
         {
-            locks[i] = 0;
+            blocked[i] = 0;
         }
     };
 
@@ -46,17 +44,17 @@ public:
     /*! \brief Diese Methode muss aufgerufen werden, wenn der kritische
      *  Abschnitt betreten wird.
      */
-    void enter() {locks[system.getCPUID()] = 1;}
+    void enter() {blocked[system.getCPUID()] = true;}
     
     /*! \brief Mit dieser Methode wird der kritische Abschnitt wieder verlassen.
      */
-    void retne() {locks[system.getCPUID()] = 0;}
+    void retne() {blocked[system.getCPUID()] = false;}
 
     /*! \brief Diese Methode gibt an, ob der kritische Abschnitt frei ist.
      *  \return Gibt \b true zurück, falls der kritische Abschnitt frei ist,
      *  ansonsten \b false.
      */
-    bool avail() const {return locks[system.getCPUID()] ? false : true;}
+    bool avail() const {return !blocked[system.getCPUID()];}
 };
 
 #endif
