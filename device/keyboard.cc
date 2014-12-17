@@ -3,15 +3,14 @@
 
 #include "object/debug.h"
 #include "machine/cpu.h"
-#include "keyboard.h"
 #include "machine/spinlock.h"
+#include "keyboard.h"
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
 extern CGA_Stream kout;
 extern APICSystem system;
 extern Spinlock global;
-
 extern int posX, j;
 
 Keyboard::Keyboard()
@@ -30,10 +29,9 @@ void Keyboard::plugin()
     drainKeyboardBuffer();
 }
 
-void Keyboard::epilogue() {
-
-//    DBG << "epilogue()" << endl;
-
+void Keyboard::epilogue()
+{
+    // DBG << "epilogue()" << endl;
     if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
         this->reboot();
@@ -45,20 +43,18 @@ void Keyboard::epilogue() {
     kout.flush();
     ++posX;
     posX=posX%MAIN_WIDTH;
+    
     if(posX == 0){ kout.cls(' '); }
 }
 
-bool Keyboard::prologue() {
-
- //   DBG << "prologue()" << endl;
-
+bool Keyboard::prologue()
+{
+    // DBG << "prologue()" << endl;
     Key localk = this->key_hit();
-
     bool valid = localk.valid();
-
-    if(valid && !k.valid()){ // k.valid semantics: value consumed, producer go on
+    if(valid && !k.valid())
+    { // k.valid semantics: value consumed, producer go on
         this->k = localk;
     }
-
     return valid;
 }

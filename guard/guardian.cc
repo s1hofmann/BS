@@ -37,4 +37,3 @@ void guardian(uint32_t vector)
     	lapic.ackIRQ(); // tell local apic that we got the irq
 	}
 }
-

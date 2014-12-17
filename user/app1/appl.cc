@@ -16,7 +16,12 @@
 #include "machine/cpu.h"
 #include "machine/spinlock.h"
 
+#include "thread/scheduler.h"
+
 #include "object/debug.h"
+
+#define MAIN_WIDTH 79
+#define MAIN_HEIGHT 12
 
 extern CGA_Stream kout;
 extern CGA_Stream dout_CPU0;
@@ -27,9 +32,13 @@ extern CGA_Stream dout_CPU3;
 extern Panic panic;
 extern Keyboard keyboard;
 
-extern int j;
+extern Scheduler scheduler;
 
-Application::Application()
+extern Guard guard;
+
+//Jede Application startet als Thread mit eigenem Stack
+//runstack+4000 ergibt die oberste Adresse des Stacks
+Application::Application() : Thread(runstack+4000)
 {
 }
 
@@ -37,28 +46,42 @@ Application::~Application()
 {
 }
 
+double Application::rand(void)
+{
+   static unsigned int z1 = 987654321, z2 = 987654321, z3 = 987654321, z4 = 987654321;
+   unsigned int b;
+   b  = ((z1 << 6) ^ z1) >> 13;
+   z1 = ((z1 & 4294967294U) << 18) ^ b;
+   b  = ((z2 << 2) ^ z2) >> 27; 
+   z2 = ((z2 & 4294967288U) << 2) ^ b;
+   b  = ((z3 << 13) ^ z3) >> 21;
+   z3 = ((z3 & 4294967280U) << 7) ^ b;
+   b  = ((z4 << 3) ^ z4) >> 12;
+   z4 = ((z4 & 4294967168U) << 13) ^ b;
+   return (z1 ^ z2 ^ z3 ^ z4) * 2.3283064365386963e-10;
+}
+
 void Application::action ()
 {
-    int id = system.getCPUID();
-    for(long i=0; ; ++i)
+    while(true)
     {
-        Secure section;
-        
-        //DBG << "Lock enabled, interrupts disabled" << endl;
-        //Poor mans guide to modulo
-        //if(!(i-((i/100)*100)))
-        //{
-            ++j;
-        //}
+        guard.enter();
+        CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
+        unsigned int x = (MAIN_WIDTH)*rand();
+        unsigned int y = (MAIN_HEIGHT)*rand();
 
-        kout.setpos(5,4+id);
-        kout << j << endl;
-
-        kout.setpos(2,8);
-        kout << "Abgabe" << endl;
-
-        kout.setpos(20, 2);
-        kout << "Aufgabe3" << " BS WS14/15" << endl;
-        kout.setpos(0, 9);
+        for(unsigned int i=0; i<MAIN_HEIGHT; ++i)
+        {
+            unsigned char textcolor = CGA_Screen::attribute(CGA_Screen::BLACK, colors[i%3], false);
+            kout.setcolor(textcolor);
+            kout.setpos(x, i);
+            char c = 26*rand()+'a';
+            kout << c << endl;
+        }
+        kout.setpos(x,y);
+        kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
+        kout << id << endl;
+        guard.leave();
+        scheduler.resume();
     }
 }

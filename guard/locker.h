@@ -28,6 +28,8 @@ private:
     uint32_t lock; // enough space for 32 CPUs
     bool blocked[CPU_MAX];
 public:
+    enum state {locked=1, unlocked=0};
+
     /*! \brief Konstruktor: Initialisiert die Sperrvariable so, dass der
      *  kritische Abschnitt als frei markiert wird.
      */
