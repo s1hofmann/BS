@@ -28,7 +28,7 @@ extern Panic panic;
 extern Keyboard keyboard;
 extern int j;
 
-Application::Application()
+Application::Application() : Thread(runstack+4000)
 {
 }
 
