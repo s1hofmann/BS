@@ -35,26 +35,37 @@ bool Keyboard::prologue()
 {
     //DBG << "KBD prologue()" << endl;
     
-    k = this->key_hit();
+    Key localk = this->key_hit();
 
-    if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
+    bool valid = localk.valid();
+
+    if(valid and !k.valid())
     {
-        this->reboot();
+        this->k = localk;
     }
 
+
     //If input is valid we request an epilogue to display the input
-    return true;
+    return valid;
 }
 
 void Keyboard::epilogue()
 {
     //DBG << "KBD epilogue()" << endl;
-    if(k.valid())
+    
+    if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
-        kout.setpos(posX,0);
-        kout << k.ascii();
-        kout.flush();
-        ++posX;
-        posX=posX%MAIN_WIDTH;
+        this->reboot();
+    }
+
+    kout.setpos(posX,0);
+    kout << k.ascii();
+    k.invalidate();
+    kout.flush();
+    ++posX;
+    posX=posX%MAIN_WIDTH;
+    if(posX==0)
+    {
+        kout.cls(' ');
     }
 }

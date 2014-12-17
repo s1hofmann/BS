@@ -30,12 +30,15 @@ extern Guard guard;
  */
 void guardian(uint32_t vector)
 {
-    bool epilogue_val = plugbox.report(vector)->prologue();
+    Gate *g = plugbox.report(vector);
 
-    lapic.ackIRQ();
-
-    if(epilogue_val)
+    if(g->prologue())
     {
-        guard.relay(plugbox.report(vector));
+        lapic.ackIRQ();
+        guard.relay(g);
+    }
+    else
+    {
+        lapic.ackIRQ();
     }
 }

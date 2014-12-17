@@ -11,12 +11,8 @@ void Guard::enter()
 {
     //CPU enters level .5
     //Critical section, set lock
-    guard_lock.lock();
-    //Wait for lock
-    while(!avail())
-    {
-    }
     Locker::enter();
+    guard_lock.lock();
 }
 
 void Guard::leave()
@@ -26,14 +22,15 @@ void Guard::leave()
     //Before leaving level .5 process epilogue queue
     while(Gate *next = epilogues[system.getCPUID()].dequeue())
     {
+        next->set_dequeued();
         //An epilogue should be interruptable
         CPU::enable_int();
-        next->set_dequeued();
         next->epilogue();
         CPU::disable_int();
     }
-    Locker::retne();
+
     guard_lock.unlock();
+    Locker::retne();
     CPU::enable_int();
 }
 
@@ -43,7 +40,7 @@ void Guard::relay(Gate *item)
     //If so, process the current epilogue right away
     if(avail())
     {
-        DBG << "relay run" << endl;
+        DBG << "epilogue directly" << endl;
         enter();
         CPU::enable_int();
         item->epilogue();
