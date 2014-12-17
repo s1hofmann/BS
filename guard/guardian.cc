@@ -1,23 +1,26 @@
-
 // vim: set et ts=4 sw=4:
 
 /*! \file
  *  \brief Low-Level Interrupt-Behandlung
  */
+
 #define DEBUG
 
 #include "types.h"
 
 #include "machine/lapic.h"
 #include "machine/plugbox.h"
-#include "guard/guard.h"
 #include "machine/cpu.h"
 
-extern Guard guard;
+#include "object/debug.h"
+
+#include "guard/guard.h"
+
 extern "C" void guardian(uint32_t vector);
 
 extern LAPIC lapic;
 extern Plugbox plugbox;
+extern Guard guard;
 
 /*! \brief Low-Level Interrupt-Behandlung.
  *
@@ -26,14 +29,15 @@ extern Plugbox plugbox;
  */
 void guardian(uint32_t vector)
 {
-    Gate* g = plugbox.report(vector);
-    if(g->prologue()){
-        /* relay or enqueue */
+    Gate *g = plugbox.report(vector);
 
-    	lapic.ackIRQ(); // tell local apic that we got the irq
+    if(g->prologue())
+    {
+        lapic.ackIRQ();
         guard.relay(g);
-    } else {
-
-    	lapic.ackIRQ(); // tell local apic that we got the irq
-	}
+    }
+    else
+    {
+        lapic.ackIRQ();
+    }
 }
