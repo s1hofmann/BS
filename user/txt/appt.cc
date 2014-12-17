@@ -53,9 +53,9 @@ void TxtApp::action ()
         guard.enter();
         for(int i=0; i<200; ++i)
         {
-            kout.setpos(MAIN_WIDTH/2-13,0);
+            kout.setpos(0,0);
             kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::WHITE, false));
-            kout << "follow the white rabbit..." << endl;
+            kout << "knock, knock..." << endl << endl << "follow the white rabbit..." << endl;
         }
         guard.leave();
         scheduler.resume();
