@@ -9,6 +9,7 @@
 #define APPLICATION_INCLUDE
 
 #include "thread/thread.h"
+#include "machine/spinlock.h"
 
 /*! \brief Die Klasse Application definiert eine Anwendung für OO-Stubs.
  */
@@ -22,6 +23,7 @@ private:
 public:
     Application();
     ~Application();
+    double rand(void);
 
     void setID(int newId) { id = newId; }
 

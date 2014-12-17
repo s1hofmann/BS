@@ -25,6 +25,8 @@
 
 #include "guard/guard.h"
 
+#include "thread/scheduler.h"
+
 #include "user/app1/appl.h"
 
 #define MAIN_WIDTH 79
@@ -36,13 +38,11 @@ IOAPIC ioapic;
 Plugbox plugbox;
 Panic panic;
 Keyboard keyboard;
+Scheduler scheduler;
 
 Guard guard;
 
-Application app0;
-Application app1;
-Application app2;
-Application app3;
+Application app[MAIN_WIDTH];
 
 long j = 0;
 int posX = 0;
@@ -59,34 +59,6 @@ static unsigned char cpu_stack[(CPU_MAX - 1) * CPU_STACK_SIZE];
 
 void *multiboot_addr = 0;
 
-unsigned char getch()
-{
-    Key k;
-
-    return k.ascii();
-}
-
-bool strcmp(char *s1, char *s2, int len)
-{
-    int count = 0;
-    for(int i=0; i<len; ++i)
-    {
-        if(s1[i] == s2[i])
-        {
-            ++count;
-        }
-    }
-
-    if(count == len)
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 /*! \brief Einsprungpunkt ins System
  */
 extern "C" int main()
@@ -97,6 +69,12 @@ extern "C" int main()
     //INIT STUFF
     ioapic.init();
     keyboard.plugin();
+
+    for(int i=0; i<MAIN_WIDTH; ++i)
+    {
+        app[i].setID(i);
+        scheduler.ready(&app[i]);
+    }
 
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
     DBG << "Number of CPUs: " << numCPUs << endl;
@@ -117,9 +95,9 @@ extern "C" int main()
         }
     }
 
-    CPU::enable_int();
-
-    app0.action();
+    //CPU::enable_int();
+    
+    scheduler.schedule();
     
     return 0;
 }
@@ -136,20 +114,8 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
-    CPU::enable_int();
-    
-    switch(system.getCPUID())
-    {
-        case 1:
-            app1.action();
-            break;
-        case 2:
-            app2.action();
-            break;
-        case 3:
-            app3.action();
-            break;
-    }
+    //CPU::enable_int();
    
+    scheduler.schedule();
     return 0;
 }

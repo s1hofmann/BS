@@ -9,6 +9,8 @@
  */
 
 #include "thread/dispatch.h"
+#include "object/queue.h"
+#include "machine/spinlock.h"
 
 /*! \brief Implementierung des Schedulers.
  *
@@ -18,11 +20,20 @@
  *  neu im System sind oder den Prozessor abgeben, stets an das Ende der Liste
  *  angefügt.
  */
-class Scheduler
+class Scheduler : public Dispatcher
 {
+public:
+    Scheduler() {}
+    void exit();
+    void kill(Thread *t);
+    void ready(Thread *t);
+    void resume();
+    void schedule();
+
 private:
     Scheduler (const Scheduler &copy); // Verhindere Kopieren
-
+    Queue<Thread> readyList;
+    Spinlock threadLock;
 };
 
 #endif

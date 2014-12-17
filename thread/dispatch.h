@@ -3,6 +3,11 @@
 #ifndef __dispatch_include__
 #define __dispatch_include__
 
+#include "machine/apicsystem.h"
+#include "thread/thread.h"
+
+extern APICSystem system;
+
 /*! \file
  *
  *  \brief Enthält die Klasse Dispatcher.
@@ -20,8 +25,17 @@
  */
 class Dispatcher
 {
+public:
+    Dispatcher() {}
+
+    Thread *active() { return life[system.getCPUID()]; }
+    void go(Thread *first);
+    void dispatch(Thread *then);
+
 private:
     Dispatcher(const Dispatcher &copy); // Verhindere Kopieren
+    void setActive(Thread *c);
+    Thread *life[CPU_MAX];
 };
 
 #endif

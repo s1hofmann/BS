@@ -49,6 +49,7 @@ toc_switch:
 
     ;Adresse von regs_then in eax kopieren
     mov eax, [8+esp]
+    mov ebx, [eax+ebx_offset]
     mov esi, [eax+esi_offset]
     mov edi, [eax+edi_offset]
     mov ebp, [eax+ebp_offset]
