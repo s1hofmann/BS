@@ -28,6 +28,7 @@
 #include "thread/scheduler.h"
 
 #include "user/app1/appl.h"
+#include "user/txt/appt.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -43,6 +44,7 @@ Scheduler scheduler;
 Guard guard;
 
 Application app[MAIN_WIDTH];
+TxtApp txt;
 
 long j = 0;
 int posX = 0;
@@ -75,6 +77,9 @@ extern "C" int main()
         app[i].setID(i);
         scheduler.ready(&app[i]);
     }
+
+    txt.setID(100);
+    scheduler.ready(&txt);
 
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
     DBG << "Number of CPUs: " << numCPUs << endl;

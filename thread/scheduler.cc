@@ -45,8 +45,12 @@ void Scheduler::resume()
     Thread *now = active();
     readyList.enqueue(now);
     //Eventuell gekillte Threads überspringen
-    while(readyList.dequeue()->dying()) {};
-    Thread *then = readyList.dequeue();
+    Thread *then;
+    then = readyList.dequeue();
+    while(then->dying())
+    {
+        then = readyList.dequeue();
+    }
     threadLock.unlock();
     dispatch(then);
 }

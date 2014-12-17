@@ -66,17 +66,20 @@ void Application::action ()
     while(true)
     {
         guard.enter();
-        CGA_Screen::color colors[3] = {CGA_Screen::LIGHT_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
-        unsigned int x = MAIN_WIDTH*rand();
-        unsigned int y = (MAIN_HEIGHT-1)*rand();
-        for(unsigned int i=0; i<y; ++i)
+        CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
+        unsigned int x = (MAIN_WIDTH)*rand();
+        unsigned int y = (MAIN_HEIGHT)*rand();
+
+        for(unsigned int i=0; i<MAIN_HEIGHT; ++i)
         {
             unsigned char textcolor = CGA_Screen::attribute(CGA_Screen::BLACK, colors[i%3], false);
             kout.setcolor(textcolor);
             kout.setpos(x, i);
-            kout << "|" << endl;
+            char c = 26*rand()+'a';
+            kout << c << endl;
         }
         kout.setpos(x,y);
+        kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
         kout << id << endl;
         guard.leave();
         scheduler.resume();
