@@ -46,7 +46,7 @@ Application::~Application()
 {
 }
 
-double Application::rand(void)
+unsigned long Application::rand(void)
 {
    static unsigned int z1 = 987654321, z2 = 987654321, z3 = 987654321, z4 = 987654321;
    unsigned int b;
@@ -58,7 +58,7 @@ double Application::rand(void)
    z3 = ((z3 & 4294967280U) << 7) ^ b;
    b  = ((z4 << 3) ^ z4) >> 12;
    z4 = ((z4 & 4294967168U) << 13) ^ b;
-   return (z1 ^ z2 ^ z3 ^ z4) * 2.3283064365386963e-10;
+   return (z1 ^ z2 ^ z3 ^ z4);
 }
 
 void Application::action ()
@@ -67,15 +67,17 @@ void Application::action ()
     {
         guard.enter();
         CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
-        unsigned int x = (MAIN_WIDTH)*rand();
-        unsigned int y = (MAIN_HEIGHT)*rand();
+        unsigned int x = rand()%MAIN_WIDTH;
+        unsigned int y = rand()%MAIN_HEIGHT;
+
+        DBG << "id: " << dec << id << endl;
 
         for(unsigned int i=0; i<MAIN_HEIGHT; ++i)
         {
             unsigned char textcolor = CGA_Screen::attribute(CGA_Screen::BLACK, colors[i%3], false);
             kout.setcolor(textcolor);
             kout.setpos(x, i);
-            char c = 26*rand()+'a';
+            char c = rand()%26+'a';
             kout << c << endl;
         }
         kout.setpos(x,y);

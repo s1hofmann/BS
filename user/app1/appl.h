@@ -25,7 +25,7 @@ public:
     ~Application();
 
     void setID(int newId) { id = newId; }
-    double rand(void);
+    unsigned long rand(void);
 
     /*! \brief Enthält den Code der Anwendung
      */

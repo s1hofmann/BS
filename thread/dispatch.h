@@ -5,6 +5,7 @@
 
 #include "machine/apicsystem.h"
 #include "thread/thread.h"
+#include "machine/spinlock.h"
 
 extern APICSystem system;
 
@@ -31,6 +32,7 @@ public:
     Thread *active() { return life[system.getCPUID()]; }
     void go(Thread *first);
     void dispatch(Thread *then);
+    Spinlock threadLock;
 
 private:
     Dispatcher(const Dispatcher &copy); // Verhindere Kopieren

@@ -33,7 +33,6 @@ public:
 private:
     Scheduler (const Scheduler &copy); // Verhindere Kopieren
     Queue<Thread> readyList;
-    Spinlock threadLock;
 };
 
 #endif

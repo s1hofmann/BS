@@ -51,7 +51,8 @@ void TxtApp::action ()
     while(true)
     {
         guard.enter();
-        for(int i=0; i<200; ++i)
+        DBG << "id: " << dec << id << endl;
+        for(int i=0; i<1000; ++i)
         {
             kout.setpos(0,0);
             kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::WHITE, false));

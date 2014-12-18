@@ -97,7 +97,7 @@ void CGA_Screen::scroll()
     //Are we at the bottom line?
     if(this->pos_y+1 >= this->scr_height)
     {
-        for(int y = 0; y < this->scr_height; ++y)
+        for(int y = 0; y < this->scr_height-1; ++y)
         {
             for(int x = 0; x < this->scr_width; ++x)
             {

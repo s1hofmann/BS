@@ -13,9 +13,9 @@ void Scheduler::exit()
     //sondern einfach den ersten Thread in der readyList ausführen.
     threadLock.lock();
     Thread *then = readyList.dequeue();
-    threadLock.unlock();
     //Der dispatcher führt den Kontextwechsel durch
     dispatch(then);
+    threadLock.unlock();
 }
 
 void Scheduler::kill(Thread *t)
@@ -51,8 +51,8 @@ void Scheduler::resume()
     {
         then = readyList.dequeue();
     }
-    threadLock.unlock();
     dispatch(then);
+    threadLock.unlock();
 }
 
 void Scheduler::schedule()
@@ -62,6 +62,5 @@ void Scheduler::schedule()
     //Alle weiteren Kontextwechsel werden über dispatch() gemacht
     threadLock.lock();
     Thread *start = readyList.dequeue();
-    threadLock.unlock();
     go(start);
 }

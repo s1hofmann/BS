@@ -3,9 +3,13 @@
 #include "object/debug.h"
 
 #include "thread/thread.h"
+#include "thread/scheduler.h"
+
+extern Scheduler scheduler;
 
 void kickoff(Thread *thread)
 {
+    scheduler.threadLock.unlock();
     //Kickoff soll nie terminieren
     while(true)
     {
