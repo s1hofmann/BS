@@ -32,7 +32,6 @@ public:
     Thread *active() { return life[system.getCPUID()]; }
     void go(Thread *first);
     void dispatch(Thread *then);
-    Spinlock threadLock;
 
 private:
     Dispatcher(const Dispatcher &copy); // Verhindere Kopieren

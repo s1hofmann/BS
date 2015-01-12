@@ -1,4 +1,3 @@
-
 // vim: set et ts=4 sw=4:
 
 /*! \file
@@ -42,9 +41,9 @@ private:
         icrl_reg			= 0x300, // Interrupt Command Register 1, R/W
         icrh_reg			= 0x310, // Interrupt Command Register 2, R/W
         timectrl_reg		= 0x320, // LAPIC timer contol register, R/W
-        timeicnt_reg 		= 0x380, // LAPIC timer initial counter register, R/W
-        timeccnt_reg 		= 0x390, // LAPIC timer current counter register, RO
-        timediv_reg 		= 0x3e0, // LAPIC timer clock divider register, RW
+        timeicnt_reg	    = 0x380, // LAPIC timer initial counter register, R/W
+        timeccnt_reg		= 0x390, // LAPIC timer current counter register, RO
+        timediv_reg         = 0x3e0, // LAPIC timer clock divider register, RW
     };
 
 public:
@@ -108,7 +107,25 @@ public:
     bool isLocalAPIC();
     /// \brief Ist diese CPU ein PentiumIV?
     bool isPentium4();
- 
+    /*! \brief Ermittelt die Frequenz des LAPIC-Timers.
+     *  \return Anzahl der Timerticks pro Millisekunde
+     *  
+     */
+    uint32_t timer_ticks();
+    /*! \brief Berechnet die Bitmaske für den Teiler des LAPIC-Timers.
+     *  \param div Teiler, Möglichkeiten: 1, 2, 4, 8, 16, 32, 64, 128
+     *  \return Bitmaske für LAPIC::setTimer() oder 0xff falls \b div
+     *  ungültig ist.
+     */
+    uint8_t timer_div(uint8_t div);
+    /*! \brief Stellt den LAPIC-Timer ein.
+     *  \param counter Startwert des Zählers, der bei jedem Bus-Takt dekrementiert wird.
+     *  \param divide Teiler durch den der Bustakt geteilt werden soll (siehe auch LAPIC::timer_div)
+     *  \param vector Nummer des auszulösenden Interrupts.
+     *  \param periodic Gibt an, ob die Unterbrechung periodisch kommen soll
+     *  \param masked Unterdrückt Unterbrechungen bei Zählerablauf
+     */
+    void setTimer(uint32_t counter, uint8_t divide, uint8_t vector, bool periodic, bool masked=false);
 };
 
 // global object declaration

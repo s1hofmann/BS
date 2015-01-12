@@ -11,19 +11,15 @@ void Scheduler::exit()
 {
     //exit() soll den aktuellen Thread nicht wieder in die readyList einhängen, 
     //sondern einfach den ersten Thread in der readyList ausführen.
-    threadLock.lock();
     Thread *then = readyList.dequeue();
     //Der dispatcher führt den Kontextwechsel durch
     dispatch(then);
-    threadLock.unlock();
 }
 
 void Scheduler::kill(Thread *t)
 {
     //Thread aus readyList löschen
-    threadLock.lock();
     Thread *victim = readyList.remove(t);
-    threadLock.unlock();
     if(!victim)
     {
         //Thread wurde nicht in readyList gefunden -> kill_flag setzen
@@ -34,14 +30,11 @@ void Scheduler::kill(Thread *t)
 void Scheduler::ready(Thread *t)
 {
     t->reset_kill_flag();
-    threadLock.lock();
     readyList.enqueue(t);
-    threadLock.unlock();
 }
 
 void Scheduler::resume()
 {
-    threadLock.lock();
     Thread *now = active();
     readyList.enqueue(now);
     //Eventuell gekillte Threads überspringen
@@ -52,7 +45,6 @@ void Scheduler::resume()
         then = readyList.dequeue();
     }
     dispatch(then);
-    threadLock.unlock();
 }
 
 void Scheduler::schedule()
@@ -60,7 +52,6 @@ void Scheduler::schedule()
     //Setzt Scheduling in Gang.
     //Dabei handelt es sich um den ERSTEN Aufruf überhaupt, go() muss verwendet werden
     //Alle weiteren Kontextwechsel werden über dispatch() gemacht
-    threadLock.lock();
     Thread *start = readyList.dequeue();
     go(start);
 }

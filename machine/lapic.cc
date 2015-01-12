@@ -1,9 +1,9 @@
-
 // vim: set et ts=4 sw=4:
 
 #include "machine/lapic.h"
 #include "machine/io_port.h"
- 
+#include "utils/math.h"
+
 // global object definition
 LAPIC lapic;
 
@@ -137,3 +137,63 @@ bool LAPIC::isPentium4()
     }
 }
 
+uint32_t LAPIC::timer_ticks()
+{
+    // PIT ports
+    IO_Port ctrl(0x43);
+    IO_Port data(0x42);
+    IO_Port help(0x61);
+
+    // start LAPIC timer, single shot, no IRQs
+    setTimer(0xffffffff, 0xb, 42, false, true);
+
+    // wind up PIT to count down from (2^16)-1 (-> takes 54.91833 ms)
+    // (speaker disable, timer gate enable -> 00000001)
+    help.outb(0x01);
+    ctrl.outb(0xB0);
+    data.outb(0xFF);
+    data.outb(0xFF);
+
+    // read current LAPIC timer counter
+    uint32_t ticks = read(timeccnt_reg).value;
+
+    // wait for PIT to finish
+    while(!(help.inb() & 0x20));
+
+    // read current LAPIC timer counter again
+    ticks = ticks - read(timeccnt_reg).value;
+
+    uint32_t freq = (uint32_t)Math::div64(((uint64_t) ticks) * 1000 * 1000, 838 * 65535);
+    return freq;
+}
+
+uint8_t LAPIC::timer_div(uint8_t div)
+{
+    // LAPIC timer divider table:
+    // value    divides by
+    // 0xb        1
+    // 0x0        2
+    // 0x1        4
+    // 0x2        8
+    // 0x3       16
+    // 0x8       32
+    // 0x9       64
+    // 0xa      128
+    const uint8_t masks[] = {0xb, 0x0, 0x1, 0x2, 0x3, 0x8, 0x9, 0xa};
+
+    // is div not a power of two, or zero?
+    if(!((div != 0) && !(div & (div - 1)))) {
+        return 0xff;
+    }
+
+    int trail = __builtin_ctz(div); // count trailing 0-bits
+    if (trail > 7) {
+        return 0xff;
+    }
+
+    return masks[trail];
+}
+
+void LAPIC::setTimer(uint32_t counter, uint8_t divide, uint8_t vector, bool periodic, bool masked)
+{
+}
