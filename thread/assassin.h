@@ -7,6 +7,8 @@
 #ifndef __assassin_h__
 #define __assassin_h__
 
+#include "guard/gate.h"
+
 class Assassin : public Gate
 {
 public:
