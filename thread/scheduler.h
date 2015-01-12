@@ -31,8 +31,8 @@ public:
     void schedule();
 
 private:
-    Scheduler (const Scheduler &copy); // Verhindere Kopieren
     Queue<Thread> readyList;
+    Scheduler (const Scheduler &copy); // Verhindere Kopieren
 };
 
 #endif

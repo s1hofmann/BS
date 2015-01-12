@@ -16,9 +16,9 @@
 #include "machine/cpu.h"
 #include "machine/spinlock.h"
 
-#include "thread/scheduler.h"
-
 #include "object/debug.h"
+
+#include "thread/scheduler.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -31,7 +31,6 @@ extern CGA_Stream dout_CPU3;
 
 extern Panic panic;
 extern Keyboard keyboard;
-
 extern Scheduler scheduler;
 
 extern Guard guard;

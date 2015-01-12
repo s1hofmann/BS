@@ -2,8 +2,10 @@
 
 #include "device/watch.h"
 #include "machine/plugbox.h"
+#include "machine/ioapic.h"
 
 extern Plugbox plugbox;
+extern IOAPIC ioapic;
 
 Watch::Watch()
 {
@@ -16,6 +18,8 @@ Watch::~Watch()
 bool Watch::windup(uint32_t us)
 {
     plugbox.assign(Plugbox::timer, this);
+    ioapic.allow(Plugbox::timer);
+
     this->interval_ = us;
 
     return true;

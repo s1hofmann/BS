@@ -30,6 +30,8 @@
 #include "user/app1/appl.h"
 #include "user/txt/appt.h"
 
+#include "syscall/guarded_scheduler.h"
+
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
 
@@ -75,11 +77,11 @@ extern "C" int main()
     for(int i=0; i<MAIN_WIDTH; ++i)
     {
         app[i].setID(i);
-        scheduler.ready(&app[i]);
+        Guarded_Scheduler::ready(&app[i]);
     }
 
     txt.setID(100);
-    scheduler.ready(&txt);
+    Guarded_Scheduler::ready(&txt);
 
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
     DBG << "Number of CPUs: " << numCPUs << endl;

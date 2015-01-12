@@ -31,9 +31,7 @@ extern CGA_Stream dout_CPU3;
 
 extern Panic panic;
 extern Keyboard keyboard;
-
 extern Scheduler scheduler;
-
 extern Guard guard;
 
 //Jede TxtApp startet als Thread mit eigenem Stack

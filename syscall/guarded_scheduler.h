@@ -7,6 +7,11 @@
 #ifndef __guarded_scheduler_include__
 #define __guarded_scheduler_include__
 
+#include "thread/scheduler.h"
+#include "guard/secure.h"
+
+extern Scheduler scheduler;
+
 /*! \brief Systemaufrufschnittstelle zum Scheduler
  *
  *  Der Guarded_Scheduler implementiert die Systemaufrufschnittstelle zum
@@ -14,6 +19,7 @@
  *  des globalen Scheduler-Objekts abgebildet, nur dass ihre Ausführung jeweils
  *  mit Hilfe eines Objekts der Klasse Secure geschützt wird.
  */
+
 class Guarded_Scheduler
 {
 public:
