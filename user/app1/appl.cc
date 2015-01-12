@@ -19,6 +19,7 @@
 #include "object/debug.h"
 
 #include "thread/scheduler.h"
+#include "syscall/guarded_scheduler.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -83,6 +84,6 @@ void Application::action ()
         kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
         kout << id << endl;
         guard.leave();
-        scheduler.resume();
+        Guarded_Scheduler::resume();
     }
 }

@@ -5,7 +5,11 @@
 #include "thread/thread.h"
 #include "thread/dispatch.h"
 
+#include "guard/guard.h"
+
 #include "object/debug.h"
+
+extern Guard guard;
 
 void Scheduler::exit()
 {
@@ -52,6 +56,7 @@ void Scheduler::schedule()
     //Setzt Scheduling in Gang.
     //Dabei handelt es sich um den ERSTEN Aufruf überhaupt, go() muss verwendet werden
     //Alle weiteren Kontextwechsel werden über dispatch() gemacht
+    guard.enter();
     Thread *start = readyList.dequeue();
     go(start);
 }

@@ -5,7 +5,6 @@
 
 #include "machine/apicsystem.h"
 #include "thread/thread.h"
-#include "machine/spinlock.h"
 
 extern APICSystem system;
 

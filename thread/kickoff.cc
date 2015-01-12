@@ -3,12 +3,13 @@
 #include "object/debug.h"
 
 #include "thread/thread.h"
-#include "thread/scheduler.h"
+#include "guard/guard.h"
 
-extern Scheduler scheduler;
+extern Guard guard;
 
 void kickoff(Thread *thread)
 {
+    guard.leave();
     //Kickoff soll nie terminieren
     while(true)
     {

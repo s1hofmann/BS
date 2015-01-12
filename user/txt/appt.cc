@@ -17,6 +17,7 @@
 #include "machine/spinlock.h"
 
 #include "thread/scheduler.h"
+#include "syscall/guarded_scheduler.h"
 
 #include "object/debug.h"
 
@@ -57,6 +58,6 @@ void TxtApp::action ()
             kout << "knock, knock..." << endl << endl << "follow the white rabbit..." << endl;
         }
         guard.leave();
-        scheduler.resume();
+        Guarded_Scheduler::resume();
     }
 }
