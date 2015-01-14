@@ -24,6 +24,7 @@ public:
     ~TxtApp();
 
     void setID(int newId) { id = newId; }
+    int getID() { return id; }
 
     /*! \brief Enthält den Code der Anwendung
      */

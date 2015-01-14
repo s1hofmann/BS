@@ -25,6 +25,8 @@ public:
     void reset_kill_flag() { kill_flag=false; }
     bool dying() { return kill_flag; }
 
+    virtual int getID() = 0;
+
 private:
     bool kill_flag;
     //toc Struktur zum sichern

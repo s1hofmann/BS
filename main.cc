@@ -108,7 +108,7 @@ extern "C" int main()
         }
     }
 
-    //CPU::enable_int();
+    CPU::enable_int();
     watch.activate();
     guard.enter();
     scheduler.schedule();
@@ -128,7 +128,7 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
-    //CPU::enable_int();
+    CPU::enable_int();
     
     watch.activate();
     guard.enter();

@@ -70,8 +70,6 @@ void Application::action ()
         unsigned int x = rand()%MAIN_WIDTH;
         unsigned int y = rand()%MAIN_HEIGHT;
 
-        DBG << "id: " << dec << id << endl;
-
         for(unsigned int i=0; i<MAIN_HEIGHT; ++i)
         {
             unsigned char textcolor = CGA_Screen::attribute(CGA_Screen::BLACK, colors[i%3], false);

@@ -6,12 +6,13 @@
 #include "machine/spinlock.h"
 #include "keyboard.h"
 #include "guard/secure.h"
+#include "thread/scheduler.h"
 
 extern IOAPIC ioapic;
 extern Plugbox plugbox;
 extern CGA_Stream kout;
 extern APICSystem system;
-extern Spinlock global;
+extern Scheduler scheduler;
 extern int posX, j;
 
 Keyboard::Keyboard() : Gate()
@@ -32,7 +33,6 @@ void Keyboard::plugin()
 
 bool Keyboard::prologue()
 {
-    //DBG << "KBD prologue()" << endl;
     Key localk = this->key_hit();
     bool valid = localk.valid();
 
@@ -47,10 +47,15 @@ bool Keyboard::prologue()
 
 void Keyboard::epilogue()
 {
-    //DBG << "KBD epilogue()" << endl;
     if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
         this->reboot();
+    }
+    else if(k.ascii()=='k')
+    {
+        DBG << "KILLING IN THE NAME OF..." << endl << endl;
+        scheduler.kill(scheduler.active());
+        DBG << "killed thread with id: " << scheduler.active()->getID() << endl << endl;
     }
 
     kout.setpos(posX,0);

@@ -39,7 +39,6 @@ void Guard::relay(Gate *item)
     //If so, process the current epilogue right away
     if(avail())
     {
-        DBG << "epilogue directly" << endl;
         enter();
         CPU::enable_int();
         item->epilogue();
@@ -50,7 +49,6 @@ void Guard::relay(Gate *item)
     {
         if(item->set_queued())
         {
-            DBG << "relay enqueue" << endl;
             epilogues[system.getCPUID()].enqueue(item);
             CPU::enable_int();
         }
