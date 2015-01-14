@@ -48,6 +48,7 @@ void Scheduler::ready(Thread *t)
 {
     t->reset_kill_flag();
     readyList.enqueue(t);
+    incrementThreadCount();
 }
 
 void Scheduler::resume()

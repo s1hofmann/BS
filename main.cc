@@ -78,7 +78,7 @@ extern "C" int main()
     ioapic.init();
     keyboard.plugin();
     assassin.hire();
-    watch.windup(1000);
+    watch.windup(1000000);
 
     for(int i=0; i<MAIN_WIDTH; ++i)
     {

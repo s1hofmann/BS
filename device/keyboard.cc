@@ -54,8 +54,13 @@ void Keyboard::epilogue()
     else if(k.ascii()=='k')
     {
         DBG << "KILLING IN THE NAME OF..." << endl << endl;
-        scheduler.kill(scheduler.active());
-        DBG << "killed thread with id: " << scheduler.active()->getID() << endl << endl;
+        if(scheduler.getThreadCount()>3)
+        {
+            scheduler.kill(scheduler.active());
+            scheduler.decrementThreadCount();
+        }
+        DBG << "killed thread with id: " << dec << scheduler.active()->getID() << endl << endl;
+        DBG << "Running threads: " << dec << scheduler.getThreadCount() << endl;
     }
 
     kout.setpos(posX,0);

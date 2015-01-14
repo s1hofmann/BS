@@ -29,10 +29,14 @@ public:
     void ready(Thread *t);
     void resume();
     void schedule();
+    void incrementThreadCount() { ++totalThreads; }
+    void decrementThreadCount() { --totalThreads; }
+    int getThreadCount() { return totalThreads; }
 
 private:
     Queue<Thread> readyList;
     Scheduler (const Scheduler &copy); // Verhindere Kopieren
+    int totalThreads;
 };
 
 #endif
