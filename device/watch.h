@@ -24,6 +24,8 @@ private:
     Watch (const Watch &copy); // Verhindere Kopieren
 
     uint32_t interval_ = 0;
+    uint32_t divider_ = 1;
+    uint32_t ticks_ = 0;
 
 public:
     Watch();

@@ -1,11 +1,18 @@
 // vim: set et ts=4 sw=4:
 
+#define DEBUG
+
 #include "device/watch.h"
 #include "machine/plugbox.h"
 #include "machine/ioapic.h"
+#include "machine/lapic.h"
+#include "object/debug.h"
+#include "thread/scheduler.h"
 
 extern Plugbox plugbox;
+extern LAPIC lapic;
 extern IOAPIC ioapic;
+extern Scheduler scheduler;
 
 Watch::Watch()
 {
@@ -22,6 +29,21 @@ bool Watch::windup(uint32_t us)
 
     this->interval_ = us;
 
+    //Ticks/Millisekunde des LAPIC timers
+    this->ticks_ = lapic.timer_ticks();
+
+    this->ticks_/=1000; //Ticks/Mikrosekunde
+    this->ticks_*=us; //Anzahl Ticks für Intervall von us Mikrosekunden
+
+    //Überlauf prüfen
+    while(this->ticks_>(2<<15)-1)
+    {
+        this->ticks_ = this->ticks_>>1;
+        this->divider_ = this->divider_<<1;
+        if(this->divider_>128)
+            return false;
+    }
+
     return true;
 }
 
@@ -32,6 +54,7 @@ bool Watch::prologue()
 
 void Watch::epilogue()
 {
+    scheduler.schedule();
 }
 
 uint32_t Watch::interval()
@@ -41,4 +64,5 @@ uint32_t Watch::interval()
 
 void Watch::activate()
 {
+    lapic.setTimer(this->ticks_, this->divider_, Plugbox::timer, true, false);
 }

@@ -12,8 +12,8 @@
 class Assassin : public Gate
 {
 public:
-    Assassin();
-    ~Assassin();
+    Assassin() {};
+    ~Assassin() {};
 
     void hire();
     bool prologue() { return true; }
