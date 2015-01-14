@@ -7,6 +7,7 @@
 #ifndef TOC_INCLUDE
 #define TOC_INCLUDE
 
+
 /*! \brief Die Struktur toc dient dazu, bei einem Koroutinenwechsel die Werte
  *  der nicht-flüchtigen Register zu sichern.
  *
@@ -31,9 +32,10 @@ struct toc {
     void *esp;
 } __attribute__ ((packed));
 
-class Thread;
+class Thread; //why do we need this here?
 
 extern "C" {
+
 }
 
 #endif

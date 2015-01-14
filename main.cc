@@ -38,10 +38,12 @@ Keyboard keyboard;
 
 Spinlock global;
 
-Application app0;
-Application app1;
-Application app2;
-Application app3;
+Application app0(0);
+Application app1(1);
+Application app2(2);
+Application app3(3);
+
+Application apps[4];
 
 long j = 0;
 int posX = 0;
@@ -106,7 +108,7 @@ extern "C" int main()
                 void* startup_stack = (void *) &(cpu_stack[(i) * CPU_STACK_SIZE]);
                 DBG << "Booting CPU " << i << ", Stack: " << startup_stack << endl;
                 
-                system.bootCPU(i, startup_stack);
+                //system.bootCPU(i, startup_stack);
             }
         }
         case APICSystem::UP_APIC: {
@@ -115,11 +117,21 @@ extern "C" int main()
         case APICSystem::UNDETECTED: {
         }
     }
+    /* thread testing BEGIN */
 
-    CPU::enable_int();
+    apps[0] = app0;
+    apps[1] = app1;
+    apps[2] = app2;
+    apps[3] = app3;
 
-    app0.action();
-    
+    app0.go();
+
+    /* thread testing END */
+
+    //CPU::enable_int();
+
+    //app0.action();
+
     return 0;
 }
 

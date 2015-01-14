@@ -5,5 +5,9 @@
 // TOC_SETTLE: bereitet den Kontext der Koroutine fuer den ersten Aufruf vor.
 void toc_settle (struct toc *regs, void *tos, void (*kickoff)(Thread*), Thread *object)
 {
+    void **esp = (void **) tos + 4096;
+    *(--esp) = object;
+    *(--esp) = (void*) 42;
+    *(--esp) = (void*) kickoff;
 }
 
