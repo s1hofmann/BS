@@ -196,4 +196,13 @@ uint8_t LAPIC::timer_div(uint8_t div)
 
 void LAPIC::setTimer(uint32_t counter, uint8_t divide, uint8_t vector, bool periodic, bool masked)
 {
+    uint32_t controlRegister = 0;
+
+    controlRegister |= periodic << 17;
+    controlRegister |= masked << 16;
+    controlRegister |= vector;
+
+    *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timectrl_reg)) = controlRegister;
+    *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timeicnt_reg)) = counter;
+    *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timediv_reg)) = divide;
 }

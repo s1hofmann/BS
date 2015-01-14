@@ -21,6 +21,7 @@ void Assassin::epilogue()
     //Wenn aktueller Thread das dying flag gesetzt hat, wird er beendet.
     if(scheduler.active() and scheduler.active()->dying())
     {
-        Guarded_Scheduler::exit();
+        //Kein resume(), sondern exit(), da der Thread nicht wieder in die readyList eingetragen werden soll.
+        scheduler.exit();
     }
 }

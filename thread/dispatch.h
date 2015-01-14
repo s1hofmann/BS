@@ -32,10 +32,12 @@ public:
     void go(Thread *first);
     void dispatch(Thread *then);
 
+protected:
+    Thread *life[CPU_MAX];
+
 private:
     Dispatcher(const Dispatcher &copy); // Verhindere Kopieren
     void setActive(Thread *c);
-    Thread *life[CPU_MAX];
 };
 
 #endif
