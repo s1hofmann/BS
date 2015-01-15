@@ -80,7 +80,8 @@ extern "C" int main()
     ioapic.init();
     keyboard.plugin();
     assassin.hire();
-    watch_init = watch.windup(1);
+    //5 Sekunden Interval
+    watch_init = watch.windup(5000000);
 
     for(int i=0; i<MAIN_WIDTH; ++i)
     {
@@ -110,10 +111,10 @@ extern "C" int main()
         }
     }
 
-    CPU::enable_int();
     if(watch_init)
         watch.activate();
     guard.enter();
+    //enable_int hier, nicht wie erst oben, da sonst sofort ein Interrupt kommen kann, der einen Taskwechsel ohne vorhandenen Task ausloest
     scheduler.schedule();
     
     return 0;
@@ -131,7 +132,6 @@ extern "C" int main_ap()
 
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
-    CPU::enable_int();
     
     if(watch_init)
         watch.activate();

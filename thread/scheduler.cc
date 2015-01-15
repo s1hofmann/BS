@@ -31,15 +31,16 @@ void Scheduler::kill(Thread *t)
     {
         //Thread wurde nicht in readyList gefunden -> kill_flag setzen
         t->set_kill_flag();
-    }
 
-    //Thread auf anderen CPUs suchen
-    int logicalDestination = 1;
-    for(int i=0; i<CPU_MAX; ++i)
-    {
-        if(life[i]==victim)
+        //Thread auf anderen CPUs suchen
+        int logicalDestination = 1;
+        for(int i=0; i<CPU_MAX; ++i)
         {
-            system.sendCustomIPI(logicalDestination<<i, Plugbox::assassin);
+            if(life[i]==victim)
+            {
+                //Logicaldestination durch lapic erhalten
+                system.sendCustomIPI(logicalDestination<<i, Plugbox::assassin);
+            }
         }
     }
 }

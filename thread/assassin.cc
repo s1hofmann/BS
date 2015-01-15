@@ -3,17 +3,14 @@
 #include "thread/assassin.h"
 #include "machine/plugbox.h"
 #include "thread/scheduler.h"
-#include "machine/ioapic.h"
 #include "syscall/guarded_scheduler.h"
 
 extern Scheduler scheduler;
 extern Plugbox plugbox;
-extern IOAPIC ioapic;
 
 void Assassin::hire()
 {
     plugbox.assign(Plugbox::assassin, this);
-    ioapic.allow(Plugbox::assassin);
 }
 
 void Assassin::epilogue()

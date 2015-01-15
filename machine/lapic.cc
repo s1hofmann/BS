@@ -196,6 +196,8 @@ uint8_t LAPIC::timer_div(uint8_t div)
 
 void LAPIC::setTimer(uint32_t counter, uint8_t divide, uint8_t vector, bool periodic, bool masked)
 {
+    // Write funktion anstatt speicherstellen verwenden
+    *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timeicnt_reg)) = 0;
     uint32_t controlRegister = 0;
 
     controlRegister |= periodic << 17;
@@ -203,6 +205,6 @@ void LAPIC::setTimer(uint32_t counter, uint8_t divide, uint8_t vector, bool peri
     controlRegister |= vector;
 
     *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timectrl_reg)) = controlRegister;
+    *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timediv_reg)) = timer_div(divide);
     *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timeicnt_reg)) = counter;
-    *(reinterpret_cast<uint32_t*>(LAPIC_BASE+timediv_reg)) = divide;
 }
