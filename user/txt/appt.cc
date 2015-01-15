@@ -50,7 +50,6 @@ void TxtApp::action ()
     while(true)
     {
         guard.enter();
-        DBG << "id: " << dec << id << endl;
         for(int i=0; i<1000; ++i)
         {
             kout.setpos(0,0);

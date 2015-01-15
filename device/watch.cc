@@ -36,7 +36,7 @@ bool Watch::windup(uint32_t us)
     this->ticks_*=us; //Anzahl Ticks für Intervall von us Mikrosekunden
 
     //Überlauf prüfen
-    while(this->ticks_>(2<<15)-1)
+    while(this->ticks_>static_cast<uint32_t>((2<<31)-1))
     {
         this->ticks_ = this->ticks_>>1;
         this->divider_ = this->divider_<<1;

@@ -55,6 +55,8 @@ TxtApp txt;
 long j = 0;
 int posX = 0;
 
+bool watch_init;
+
 CGA_Stream kout(0, MAIN_WIDTH, 0, MAIN_HEIGHT, false);
 CGA_Stream dout_CPU0(0, 19, 13, 24, false);
 CGA_Stream dout_CPU1(20, 39, 13, 24, false);
@@ -78,7 +80,7 @@ extern "C" int main()
     ioapic.init();
     keyboard.plugin();
     assassin.hire();
-    watch.windup(1000000);
+    watch_init = watch.windup(1);
 
     for(int i=0; i<MAIN_WIDTH; ++i)
     {
@@ -109,7 +111,8 @@ extern "C" int main()
     }
 
     CPU::enable_int();
-    watch.activate();
+    if(watch_init)
+        watch.activate();
     guard.enter();
     scheduler.schedule();
     
@@ -130,7 +133,8 @@ extern "C" int main_ap()
     //This caused quite a mess when dealing with keyboard input in exercise 1
     CPU::enable_int();
     
-    watch.activate();
+    if(watch_init)
+        watch.activate();
     guard.enter();
     scheduler.schedule();
 
