@@ -11,6 +11,7 @@
 #include "thread/dispatch.h"
 #include "object/queue.h"
 #include "machine/spinlock.h"
+#include "meeting/waitingroom.h"
 
 /*! \brief Implementierung des Schedulers.
  *
@@ -29,6 +30,9 @@ public:
     void ready(Thread *t);
     void resume();
     void schedule();
+    void block(Thread *t, Waitingroom *w);
+
+    //Custom methods
     void incrementThreadCount() { ++totalThreads; }
     void decrementThreadCount() { --totalThreads; }
     int getThreadCount() { return totalThreads; }

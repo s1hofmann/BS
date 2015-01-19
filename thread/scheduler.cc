@@ -74,3 +74,11 @@ void Scheduler::schedule()
     Thread *start = readyList.dequeue();
     go(start);
 }
+
+void Scheduler::block(Thread *t, Waitingroom *w)
+{
+    t->waiting_in(w);
+    readyList.remove(t);
+    w->add(t);
+    exit();
+}

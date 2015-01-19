@@ -9,6 +9,7 @@
 #include "machine/toc.h"
 #include "thread/thread.h"
 #include "object/queueentry.h"
+#include "meeting/waitingroom.h"
 
 //Forward declaration
 void kickoff(Thread *thread);
@@ -24,8 +25,12 @@ public:
     void set_kill_flag() { kill_flag=true; }
     void reset_kill_flag() { kill_flag=false; }
     bool dying() { return kill_flag; }
+    Waitingroom *waiting_in() { return myWaitingroom_; }
+    void waiting_in(Waitingroom *w) { myWaitingroom_ = w; }
 
     virtual int getID() = 0;
+
+    Waitingroom *myWaitingroom_;
 
 private:
     bool kill_flag;
