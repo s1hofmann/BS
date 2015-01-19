@@ -7,6 +7,8 @@
 #include "machine/apicsystem.h"
 #include "machine/plugbox.h"
 
+#include "meeting/waitingroom.h"
+
 #include "guard/guard.h"
 
 #include "object/debug.h"

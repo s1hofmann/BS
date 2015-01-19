@@ -16,21 +16,20 @@ void Waitingroom::add(Thread *t)
 
 void Waitingroom::remove(Thread *t)
 {
-    scheduler.ready(this->remove(t));
+    scheduler.ready(Queue::remove(t));
 }
 
 Waitingroom::~Waitingroom()
 {
-    Thread *t = this->dequeue();
+    Thread *t;
     int logicalDestination=1;
 
-    while(this->first())
+    while((t = this->dequeue()))
     {
         scheduler.ready(t);
         for(int i=0; i<CPU_MAX; ++i)
         {
             system.sendCustomIPI(logicalDestination<<i, Plugbox::wakeup);
         }
-        Thread *t = this->dequeue();
     }
 }

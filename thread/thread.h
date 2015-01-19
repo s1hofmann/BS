@@ -13,6 +13,7 @@
 
 //Forward declaration
 void kickoff(Thread *thread);
+class Waitingroom;
 
 class Thread : public QueueEntry<Thread>
 {
@@ -30,7 +31,7 @@ public:
 
     virtual int getID() = 0;
 
-    Waitingroom *myWaitingroom_;
+    Waitingroom *myWaitingroom_ = 0;
 
 private:
     bool kill_flag;

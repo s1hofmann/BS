@@ -11,7 +11,7 @@ void Semaphore::p()
     }
     else
     {
-        scheduler.block(scheduler.active(), this->waiting_);
+        scheduler.block(scheduler.active(), this);
     }
 }
 

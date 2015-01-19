@@ -29,8 +29,6 @@ private:
     Semaphore(const Semaphore &copy); // Verhindere Kopieren
 
     int counter_;
-
-    Waitingroom *waiting_;
 };
 
 #endif
