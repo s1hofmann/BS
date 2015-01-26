@@ -20,6 +20,7 @@
 
 #include "thread/scheduler.h"
 #include "syscall/guarded_scheduler.h"
+#include "syscall/guarded_semaphore.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -35,6 +36,8 @@ extern Keyboard keyboard;
 extern Scheduler scheduler;
 
 extern Guard guard;
+
+extern Guarded_Semaphore cgaSemaphore;
 
 //Jede Application startet als Thread mit eigenem Stack
 //runstack+4000 ergibt die oberste Adresse des Stacks
@@ -65,7 +68,8 @@ void Application::action ()
 {
     while(true)
     {
-        guard.enter();
+        //guard.enter();
+        cgaSemaphore.p();
         CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
         unsigned int x = rand()%MAIN_WIDTH;
         unsigned int y = rand()%MAIN_HEIGHT;
@@ -81,7 +85,8 @@ void Application::action ()
         kout.setpos(x,y);
         kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
         kout << id << endl;
-        guard.leave();
+        //guard.leave();
+        cgaSemaphore.v();
         Guarded_Scheduler::resume();
     }
 }

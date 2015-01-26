@@ -31,6 +31,7 @@ public:
     void resume();
     void schedule();
     void block(Thread *t, Waitingroom *w);
+    void wakeup(Thread *t);
 
     //Custom methods
     void incrementThreadCount() { ++totalThreads; }

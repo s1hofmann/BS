@@ -33,6 +33,7 @@
 #include "user/txt/appt.h"
 
 #include "syscall/guarded_scheduler.h"
+#include "syscall/guarded_semaphore.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -48,6 +49,8 @@ Scheduler scheduler;
 Guard guard;
 Assassin assassin;
 Watch watch;
+
+Guarded_Semaphore cgaSemaphore(1);
 
 Application app[MAIN_WIDTH];
 TxtApp txt;

@@ -7,6 +7,9 @@
 #ifndef __Bellringer_include__
 #define __Bellringer_include__
 
+#include "object/queue.h"
+#include "meeting/bell.h"
+
 /*! \brief Verwaltung und Anstoßen von zeitgesteuerten Aktivitäten.
  *
  *  Der "Glöckner" (Bellringer) wird regelmäßig aktiviert und prüft, ob
@@ -15,14 +18,21 @@
  *  Implementierung vermeidet, bei jeder Aktivierung die gesamte Liste
  *  zu durchlaufen.
  */
-class Bellringer
+class Bellringer : public Queue<Bell>
 {
 private:
     Bellringer(const Bellringer &copy); // Verhindere Kopieren
+
+    Queue<Bell> bellList;
+
 public:
     /*! \brief Konstruktor.
      */
     Bellringer() {}
+    void check();
+    void job(Bell *b);
+    void cancel(Bell *b);
+    void ring_the_bells();
 };
 
 #endif

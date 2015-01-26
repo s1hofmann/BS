@@ -84,3 +84,9 @@ void Scheduler::block(Thread *t, Waitingroom *w)
     w->add(t);
     exit();
 }
+
+void Scheduler::wakeup(Thread *t)
+{
+    t->waiting_in(0);
+    this->ready(t);
+}

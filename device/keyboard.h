@@ -6,6 +6,8 @@
 #include "machine/keyctrl.h"
 #include "machine/apicsystem.h"
 
+#include "meeting/semaphore.h"
+
 class Keyboard : public Gate, public Keyboard_Controller
 {
 public:
@@ -16,10 +18,13 @@ public:
     
     virtual bool prologue();
     virtual void epilogue();
+    Key getkey();
 
 private:
     /* data */
     Key k;
+    Semaphore s;
+
 };
 
 #endif /* end of include guard: KEYBOARD_H_MWKYFDLH */

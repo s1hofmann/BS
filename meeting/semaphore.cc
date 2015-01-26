@@ -17,4 +17,13 @@ void Semaphore::p()
 
 void Semaphore::v()
 {
+    Thread *t;
+    if((t = this->dequeue()))
+    {
+        scheduler.wakeup(t);
+    }
+    else
+    {
+        ++this->counter_;
+    }
 }

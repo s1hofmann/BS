@@ -15,7 +15,7 @@ extern APICSystem system;
 extern Scheduler scheduler;
 extern int posX, j;
 
-Keyboard::Keyboard() : Gate()
+Keyboard::Keyboard() : Gate(), s(1)
 {
 }
 
@@ -45,33 +45,57 @@ bool Keyboard::prologue()
     return valid;
 }
 
-void Keyboard::epilogue()
+//Sollte zwischen Prolog und Epilog ausgeführt werden...
+//Aber deshalb stehts nicht extra dazwischen
+Key Keyboard::getkey()
 {
+    //Erstmal blockieren
+    s.p();
+    
+    //Eventuell rebooten
     if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
     {
         this->reboot();
     }
-    else if(k.ascii()=='k')
-    {
-        DBG << "KILLING IN THE NAME OF..." << endl << endl;
-        if(scheduler.getThreadCount()>3)
-        {
-            scheduler.kill(scheduler.active());
-            scheduler.decrementThreadCount();
-        }
-        DBG << "killed thread with id: " << dec << scheduler.active()->getID() << endl << endl;
-        DBG << "Running threads: " << dec << scheduler.getThreadCount() << endl;
-    }
 
-    kout.setpos(posX,0);
-    kout << k.ascii();
+    //Ansonsten zurückggeben
+    Key returnKey = k;
     k.invalidate();
-    kout.flush();
-    ++posX;
-    posX=posX%MAIN_WIDTH;
 
-    if(posX==0)
-    {
-        kout.cls(' ');
-    }
+    return returnKey;
+}
+
+void Keyboard::epilogue()
+{
+    //Im Epilog sollte die ganze Verarbeitung passiert sein, also wird die Semaphore wieder freigegeben
+    s.v();
+
+
+    //if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
+    //{
+        //this->reboot();
+    //}
+    //else if(k.ascii()=='k')
+    //{
+        //DBG << "KILLING IN THE NAME OF..." << endl << endl;
+        //if(scheduler.getThreadCount()>3)
+        //{
+            //scheduler.kill(scheduler.active());
+            //scheduler.decrementThreadCount();
+        //}
+        //DBG << "killed thread with id: " << dec << scheduler.active()->getID() << endl << endl;
+        //DBG << "Running threads: " << dec << scheduler.getThreadCount() << endl;
+    //}
+
+    //kout.setpos(posX,0);
+    //kout << k.ascii();
+    //k.invalidate();
+    //kout.flush();
+    //++posX;
+    //posX=posX%MAIN_WIDTH;
+
+    //if(posX==0)
+    //{
+        //kout.cls(' ');
+    //}
 }

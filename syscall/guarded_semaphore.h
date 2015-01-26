@@ -3,6 +3,9 @@
 #ifndef __Guarded_Semaphore_include__
 #define __Guarded_Semaphore_include__
 
+#include "guard/secure.h"
+#include "meeting/semaphore.h"
+
 /*! \file
  *  \brief Enthält die Klasse Guarded_Semaphore
  */
@@ -14,8 +17,14 @@
  *  direkt auf die Methoden der Basisklasse abgebildet, nur dass ihre Ausführung
  *  jeweils mit Hilfe eines Objekts der Klasse Secure geschützt wird.
  */
-class Guarded_Semaphore
+class Guarded_Semaphore : public Semaphore
 {
+public:
+    Guarded_Semaphore(int c) : Semaphore(c) {}
+    ~Guarded_Semaphore() {}
+
+    void p() { Secure section; Semaphore::p(); }
+    void v() { Secure section; Semaphore::v(); }
 private:
     Guarded_Semaphore(const Guarded_Semaphore &copy); // Verhindere Kopieren
 };
