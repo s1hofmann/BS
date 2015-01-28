@@ -13,6 +13,7 @@ void Bellringer::job(Bell *b)
 
 void Bellringer::cancel(Bell *b)
 {
+    b->sleep();
 }
 
 void Bellringer::ring_the_bells()

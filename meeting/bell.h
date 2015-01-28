@@ -21,7 +21,7 @@ class Bell : public Waitingroom, public QueueEntry<Bell>
 {
 public:
     void ring() { DBG << "GET UP!" << endl; }
-    void set(int ms) { counter_ = ms; }
+    void set(int ms) { time_ = ms; }
     void sleep();
     void sleep(int ms) { }
     void wait(int ms) { counter_ = ms; }
