@@ -27,6 +27,7 @@
 
 #include "thread/scheduler.h"
 #include "thread/assassin.h"
+#include "thread/idlethread.h"
 #include "device/watch.h"
 
 #include "user/app1/appl.h"
@@ -54,6 +55,7 @@ Guarded_Semaphore cgaSemaphore(1);
 
 Application app[MAIN_WIDTH];
 TxtApp txt;
+IdleThread idleThreads[4];
 
 long j = 0;
 int posX = 0;
@@ -86,14 +88,21 @@ extern "C" int main()
     //5 Sekunden Interval
     watch_init = watch.windup(5000000);
 
-    for(int i=0; i<MAIN_WIDTH; ++i)
+    //for(int i=0; i<MAIN_WIDTH; ++i)
+    for(int i=0; i<8; ++i)
     {
         app[i].setID(i);
         Guarded_Scheduler::ready(&app[i]);
     }
+    for(int i=0; i<4; ++i)
+    {
+        idleThreads[i].setID(1337);
+        // idleThreads nicht in die readyList!
+        //Guarded_Scheduler::ready(&idleThreads[i]);
+    }
 
-    txt.setID(100);
-    Guarded_Scheduler::ready(&txt);
+    //txt.setID(100);
+    //Guarded_Scheduler::ready(&txt);
 
     DBG << "Is SMP system? " << (type == APICSystem::MP_APIC) << endl;
     DBG << "Number of CPUs: " << numCPUs << endl;
@@ -104,7 +113,7 @@ extern "C" int main()
                 void* startup_stack = (void *) &(cpu_stack[(i) * CPU_STACK_SIZE]);
                 DBG << "Booting CPU " << i << ", Stack: " << startup_stack << endl;
                 
-                system.bootCPU(i, startup_stack);
+//                system.bootCPU(i, startup_stack);
             }
         }
         case APICSystem::UP_APIC: {
