@@ -1,5 +1,7 @@
 // vim: set et ts=4 sw=4:
 
+#include "meeting/waitingroom.h"
+
 #ifndef __Bell_include__
 #define __Bell_include__
 
@@ -28,7 +30,7 @@ public:
     
     int wait() { return counter_; }
     void tick() { --counter_; }
-    bool run_down() { return counter==0 ? true : false; }
+    bool run_down() { return counter_==0 ? true : false; }
     
 private:
     Bell(const Bell &copy); // Verhindere Kopieren

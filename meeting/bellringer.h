@@ -30,7 +30,7 @@ public:
      */
     Bellringer() {}
     void check();
-    void job(Bell *b);
+    void job(Bell *b, int ticks);
     void cancel(Bell *b);
     void ring_the_bells();
 };

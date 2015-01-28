@@ -7,22 +7,22 @@ void Bellringer::check()
 {
 }
 
-void Bellringer::job(Bell *b)
+void Bellringer::job(Bell *bell, int ticks)
 {
 }
 
-void Bellringer::cancel(Bell *b)
+void Bellringer::cancel(Bell *bell)
 {
     b->sleep();
 }
 
 void Bellringer::ring_the_bells()
 {
-    Bell *b;
-    b = bellList.dequeue();
-    while(b->run_down())
+    Bell *bell;
+    bell = bellList.dequeue();
+    while(bell->run_down())
     {
-        b->ring();
-        b = bellList.dequeue();
+        bell->ring();
+        bell = bellList.dequeue();
     }
 }

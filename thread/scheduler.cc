@@ -3,6 +3,7 @@
 
 #include "thread/scheduler.h"
 #include "thread/thread.h"
+#include "thread/idlethread.h"
 #include "thread/dispatch.h"
 #include "machine/apicsystem.h"
 #include "machine/plugbox.h"
@@ -15,6 +16,7 @@
 
 extern Guard guard;
 extern APICSystem system;
+extern IdleThread idleThreads[4];
 
 void Scheduler::exit()
 {
@@ -22,7 +24,12 @@ void Scheduler::exit()
     //sondern einfach den ersten Thread in der readyList ausführen.
     Thread *then = readyList.dequeue();
     //Der dispatcher führt den Kontextwechsel durch
-    dispatch(then);
+    if(then){
+        dispatch(then);
+    } else {
+        DBG << "readyList empty" << endl;
+        dispatch(&idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::kill(Thread *t)
@@ -57,7 +64,11 @@ void Scheduler::ready(Thread *t)
 void Scheduler::resume()
 {
     Thread *now = active();
-    readyList.enqueue(now);
+    // Es gibt sicherlich eine bessere Methode, um IdleThreads von anderen zu unterscheiden
+    if(now->getID() != 1337){
+        readyList.enqueue(now);
+    }
+
     //Eventuell gekillte Threads überspringen
     Thread *then;
     then = readyList.dequeue();
@@ -65,7 +76,13 @@ void Scheduler::resume()
     {
         then = readyList.dequeue();
     }
-    dispatch(then);
+
+    if(then){
+        dispatch(then);
+    } else {
+        DBG << "readyList empty" << endl;
+        dispatch(&idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::schedule()
@@ -80,7 +97,8 @@ void Scheduler::schedule()
 void Scheduler::block(Thread *t, Waitingroom *w)
 {
     t->waiting_in(w);
-    readyList.remove(t);
+    // t sollte zu diesem Zeitpunkt nicht in readyList sein
+    //readyList.remove(t);
     w->add(t);
     exit();
 }
