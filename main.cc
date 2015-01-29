@@ -32,12 +32,14 @@
 #include "device/watch.h"
 
 #include "user/app1/appl.h"
+#include "user/app2/kappl.h"
 #include "user/txt/appt.h"
 
 #include "meeting/bellringer.h"
 
 #include "syscall/guarded_scheduler.h"
 #include "syscall/guarded_semaphore.h"
+#include "syscall/guarded_keyboard.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -47,7 +49,6 @@ extern APICSystem system;
 IOAPIC ioapic;
 Plugbox plugbox;
 Panic panic;
-Keyboard keyboard;
 Scheduler scheduler;
 
 Guard guard;
@@ -57,8 +58,10 @@ Watch watch;
 Bellringer ringer;
 
 Guarded_Semaphore cgaSemaphore(1);
+Guarded_Keyboard keyboard;
 
 Application app[MAIN_WIDTH];
+KeyboardApplication kapp;
 TxtApp txt;
 IdleThread idleThreads[CPU_MAX];
 
@@ -91,8 +94,8 @@ extern "C" int main()
     keyboard.plugin();
     assassin.hire();
     wakeup.activate();
-    //5 Sekunden Interval
-    watch_init = watch.windup(5000000);
+    //1 Sekunden Interval
+    watch_init = watch.windup(1000000);
 
     //for(int i=0; i<MAIN_WIDTH; ++i)
     for(int i=0; i<8; ++i)
@@ -105,6 +108,9 @@ extern "C" int main()
         idleThreads[i].setID(1337);
         scheduler.setIdleThread(i, &idleThreads[i]);
     }
+
+    kapp.setID(911);
+    scheduler.ready(&kapp);
 
     //txt.setID(100);
     //Guarded_Scheduler::ready(&txt);
