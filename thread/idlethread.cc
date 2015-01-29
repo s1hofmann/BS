@@ -5,6 +5,7 @@
 #include "machine/cpu.h"
 
 extern APICSystem system;
+#include "object/debug.h"
 
 IdleThread::IdleThread() : Thread(runstack+4000)
 {
@@ -33,4 +34,5 @@ void IdleThread::action()
        // DBG << "Still idle..." << endl;
     }
 */
+
 }

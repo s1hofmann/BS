@@ -69,7 +69,6 @@ void Application::action ()
     while(true)
     {
         //guard.enter();
-
 /*        CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
         unsigned int x = rand()%MAIN_WIDTH;
         unsigned int y = rand()%MAIN_HEIGHT;

@@ -87,6 +87,13 @@ void Scheduler::resume()
         DBG << "rdyList empty" << endl;
         dispatch(&idleThreads[system.getCPUID()]);
     }
+
+    if(then){
+        dispatch(then);
+    } else {
+        DBG << "readyList empty" << endl;
+        dispatch(&idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::schedule()

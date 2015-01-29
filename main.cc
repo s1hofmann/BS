@@ -113,7 +113,7 @@ extern "C" int main()
                 void* startup_stack = (void *) &(cpu_stack[(i) * CPU_STACK_SIZE]);
                 DBG << "Booting CPU " << i << ", Stack: " << startup_stack << endl;
                 
-                system.bootCPU(i, startup_stack);
+//                system.bootCPU(i, startup_stack);
             }
         }
         case APICSystem::UP_APIC: {
