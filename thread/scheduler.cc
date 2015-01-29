@@ -18,23 +18,6 @@ extern Guard guard;
 extern APICSystem system;
 extern IdleThread idleThreads[4];
 
-void Scheduler::exit()
-{
-    //exit() soll den aktuellen Thread nicht wieder in die readyList einhängen, 
-    //sondern einfach den ersten Thread in der readyList ausführen.
-    //Der dispatcher führt den Kontextwechsel durch
-    if(!isEmpty())
-    {
-        Thread *then = readyList.dequeue();
-        dispatch(then);
-    } 
-    else
-    {
-        DBG << "readyList empty" << endl;
-        dispatch(idleThreads[system.getCPUID()]);
-    }
-}
-
 void Scheduler::kill(Thread *t)
 {
     //Thread aus readyList löschen
@@ -64,23 +47,19 @@ void Scheduler::ready(Thread *t)
     incrementThreadCount();
 }
 
-void Scheduler::resume()
+void Scheduler::exit()
 {
-    Thread *now = active();
-    if(now != idleThreads[system.getCPUID()])
+    //exit() soll den aktuellen Thread nicht wieder in die readyList einhängen, 
+    //sondern einfach den ersten Thread in der readyList ausführen.
+    //Der dispatcher führt den Kontextwechsel durch
+    Thread *then = readyList.dequeue();
+    while(then and then->dying())
     {
-        readyList.enqueue(now);
+        then = readyList.dequeue();
     }
 
-    if(!isEmpty())
+    if(then)
     {
-        //Eventuell gekillte Threads überspringen
-        Thread *then;
-        then = readyList.dequeue();
-        while(then->dying())
-        {
-            then = readyList.dequeue();
-        }
         dispatch(then);
     }
     else
@@ -88,6 +67,34 @@ void Scheduler::resume()
         DBG << "readyList empty" << endl;
         dispatch(idleThreads[system.getCPUID()]);
     }
+}
+
+void Scheduler::resume()
+{
+    Thread *now = active();
+    //Wenn der Thread sterben soll, sollte er auch nicht wieder eingefügt werden
+    if(now != idleThreads[system.getCPUID()] and !now->dying())
+    {
+        readyList.enqueue(now);
+    }
+    //Alles, was hier gemacht wird, wird doch quasi eh schon fast in exit() gemacht
+    //Dann könnte man das doch kombinieren
+    
+        //Eventuell gekillte Threads überspringen
+        //Thread *then;
+        //then = readyList.dequeue();
+        //while(then and then->dying())
+        //{
+            //then = readyList.dequeue();
+        //}
+        //dispatch(then);
+    //}
+    //else
+    //{
+        //DBG << "readyList empty" << endl;
+        //dispatch(idleThreads[system.getCPUID()]);
+    //}
+    exit();
 }
 
 void Scheduler::schedule()
