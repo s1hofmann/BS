@@ -1,5 +1,8 @@
 // vim: set et ts=4 sw=4:
 
+#define DEBUG
+#include "object/debug.h"
+
 #ifndef __WAKEUP_H__
 #define __WAKEUP_H__
 
@@ -20,8 +23,8 @@ extern Plugbox plugbox;
 class WakeUp : public Gate
 {
     public:
-        void activate() { plugbox.assign(Plugbox::wakeup, this}; }
-        bool prologue() { return false; }
+        void activate() { plugbox.assign(Plugbox::wakeup, this); }
+        bool prologue() { DBG << "wakeup!" << endl; return false; }
 };
 
 #endif /* __WAKEUP_H__ */

@@ -45,6 +45,17 @@ void Scheduler::ready(Thread *t)
     t->reset_kill_flag();
     readyList.enqueue(t);
     incrementThreadCount();
+
+    //Thread auf anderen CPUs suchen
+    int logicalDestination = 1;
+    for(int i=0; i<CPU_MAX; ++i)
+    {
+        if(life[i]==idleThreads[i])
+        {
+            //Logicaldestination durch lapic erhalten
+            system.sendCustomIPI(logicalDestination<<i, Plugbox::wakeup);
+        }
+    }
 }
 
 void Scheduler::exit()
@@ -103,7 +114,15 @@ void Scheduler::schedule()
     //Dabei handelt es sich um den ERSTEN Aufruf überhaupt, go() muss verwendet werden
     //Alle weiteren Kontextwechsel werden über dispatch() gemacht
     Thread *start = readyList.dequeue();
-    go(start);
+    if(start)
+    {
+        go(start);
+    }
+    else
+    {
+        DBG << "readyList empty" << endl;
+        go(idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::block(Thread *t, Waitingroom *w)
@@ -117,7 +136,7 @@ void Scheduler::block(Thread *t, Waitingroom *w)
 
 void Scheduler::wakeup(Thread *t)
 {
-    t->waiting_in(0);
+    //t->waiting_in(0);
     this->ready(t);
 }
     

@@ -27,6 +27,7 @@
 
 #include "thread/scheduler.h"
 #include "thread/assassin.h"
+#include "thread/wakeup.h"
 #include "thread/idlethread.h"
 #include "device/watch.h"
 
@@ -49,6 +50,7 @@ Scheduler scheduler;
 
 Guard guard;
 Assassin assassin;
+WakeUp wakeup;
 Watch watch;
 
 Guarded_Semaphore cgaSemaphore(1);
@@ -85,6 +87,7 @@ extern "C" int main()
     ioapic.init();
     keyboard.plugin();
     assassin.hire();
+    wakeup.activate();
     //5 Sekunden Interval
     watch_init = watch.windup(5000000);
 
@@ -112,7 +115,7 @@ extern "C" int main()
                 void* startup_stack = (void *) &(cpu_stack[(i) * CPU_STACK_SIZE]);
                 DBG << "Booting CPU " << i << ", Stack: " << startup_stack << endl;
                 
-//                system.bootCPU(i, startup_stack);
+                system.bootCPU(i, startup_stack);
             }
         }
         case APICSystem::UP_APIC: {

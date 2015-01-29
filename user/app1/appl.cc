@@ -69,7 +69,7 @@ void Application::action ()
     while(true)
     {
         //guard.enter();
-        cgaSemaphore.p();
+        //cgaSemaphore.p();
 /*        CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
         unsigned int x = rand()%MAIN_WIDTH;
         unsigned int y = rand()%MAIN_HEIGHT;
@@ -85,7 +85,9 @@ void Application::action ()
         kout.setpos(x,y);
         kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
 */
-        kout << id << endl;
+        cgaSemaphore.p();
+        kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
+
         int c = 0;
         for(int i = 0; i<1000000; i++){
             for(int j = 0; j<1000; j++){
@@ -94,8 +96,15 @@ void Application::action ()
             c -= 1000;
         }
 
+        kout << "out t-" << id << " cpu-" << system.getCPUID() << endl;
         //guard.leave();
         cgaSemaphore.v();
         //Guarded_Scheduler::resume();
+        for(int i = 0; i<1000000; i++){
+            for(int j = 0; j<1000; j++){
+                c++;
+            }
+            c -= 1000;
+        }
     }
 }
