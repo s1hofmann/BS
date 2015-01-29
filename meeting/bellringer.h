@@ -23,8 +23,6 @@ class Bellringer : public Queue<Bell>
 private:
     Bellringer(const Bellringer &copy); // Verhindere Kopieren
 
-    Queue<Bell> bellList;
-
 public:
     /*! \brief Konstruktor.
      */
