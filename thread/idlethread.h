@@ -19,8 +19,19 @@
  *  ausgeführt werden sollen, wenn kein normaler Thread mehr bereit ist.
  *
  */
-class IdleThread
+class IdleThread : public Thread
 {
+public:
+    IdleThread();
+    ~IdleThread();
+
+    void setID(int id) { this->id = id; }
+    int getID() { return id; }
+    void action();
+private:
+    IdleThread(const IdleThread &copy); // Verhindere Kopieren
+    int id;
+    char runstack[4000];
 };
 
 #endif // __idle_thread_h__

@@ -64,7 +64,7 @@ bool Watch::prologue()
 void Watch::epilogue()
 {
     ++this->time[system.getCPUID()];
-    DBG << "Timer: " << dec << this->time[system.getCPUID()] << endl;
+    //DBG << "Timer: " << dec << this->time[system.getCPUID()] << endl;
     scheduler.resume();
 }
 

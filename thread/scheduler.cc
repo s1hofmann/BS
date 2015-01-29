@@ -3,6 +3,7 @@
 
 #include "thread/scheduler.h"
 #include "thread/thread.h"
+#include "thread/idlethread.h"
 #include "thread/dispatch.h"
 #include "machine/apicsystem.h"
 #include "machine/plugbox.h"
@@ -15,6 +16,7 @@
 
 extern Guard guard;
 extern APICSystem system;
+extern IdleThread idleThreads[4];
 
 void Scheduler::exit()
 {
@@ -22,7 +24,12 @@ void Scheduler::exit()
     //sondern einfach den ersten Thread in der readyList ausführen.
     Thread *then = readyList.dequeue();
     //Der dispatcher führt den Kontextwechsel durch
-    dispatch(then);
+    if(then){
+        dispatch(then);
+    } else {
+        DBG << "rdyList empty" << endl;
+        dispatch(&idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::kill(Thread *t)
@@ -57,15 +64,29 @@ void Scheduler::ready(Thread *t)
 void Scheduler::resume()
 {
     Thread *now = active();
-    readyList.enqueue(now);
+
+    if(now != &idleThreads[system.getCPUID()]){
+        readyList.enqueue(now);
+    }
+
     //Eventuell gekillte Threads überspringen
     Thread *then;
     then = readyList.dequeue();
-    while(then->dying())
-    {
-        then = readyList.dequeue();
+
+    if(then){
+        while(then->dying())
+        {
+            then = readyList.dequeue();
+            if(!then) break;
+        }
     }
-    dispatch(then);
+
+    if(then){
+        dispatch(then);
+    } else {
+        DBG << "rdyList empty" << endl;
+        dispatch(&idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::schedule()
@@ -74,13 +95,20 @@ void Scheduler::schedule()
     //Dabei handelt es sich um den ERSTEN Aufruf überhaupt, go() muss verwendet werden
     //Alle weiteren Kontextwechsel werden über dispatch() gemacht
     Thread *start = readyList.dequeue();
-    go(start);
+
+    if(start){
+        go(start);
+    } else {
+        DBG << "rdyList empty" << endl;
+        go(&idleThreads[system.getCPUID()]);
+    }
 }
 
 void Scheduler::block(Thread *t, Waitingroom *w)
 {
     t->waiting_in(w);
-    readyList.remove(t);
+    // t sollte zu diesem Zeitpunkt nicht in readyList sein
+    //readyList.remove(t);
     w->add(t);
     exit();
 }

@@ -1,5 +1,9 @@
+#define DEBUG
+
 #include "meeting/semaphore.h"
 #include "thread/scheduler.h"
+
+#include "object/debug.h"
 
 extern Scheduler scheduler;
 
@@ -11,7 +15,9 @@ void Semaphore::p()
     }
     else
     {
-        scheduler.block(scheduler.active(), this);
+        Thread *t = scheduler.active();
+        //DBG << "blocked t: " << t->getID() << endl;
+        scheduler.block(t, this);
     }
 }
 
