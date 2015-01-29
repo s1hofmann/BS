@@ -15,9 +15,7 @@ void Semaphore::p()
     }
     else
     {
-        Thread *t = scheduler.active();
-        DBG << "blocked t: " << t->getID() << endl;
-        scheduler.block(t, this);
+        scheduler.block(this);
     }
 }
 

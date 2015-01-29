@@ -22,19 +22,21 @@
 class Bell : public Waitingroom, public QueueEntry<Bell>
 {
 public:
-    void ring() { DBG << "GET UP!" << endl; }
-    void set(int ms) { }
-    void sleep() {}
+    void ring();
+    void sleep();
+    void set(int ms) { startTime_ = ms; }
     void sleep(int ms) { counter_ = ms; sleep(); }
+
     void wait(int ms) { counter_ = ms; }
-    
     int wait() { return counter_; }
+
     void tick() { --counter_; }
-    bool run_down() { return counter_==0 ? true : false; }
+    bool run_down() { return counter_ == 0 ? true : false; }
     
 private:
     Bell(const Bell &copy); // Verhindere Kopieren
     int counter_;
+    int startTime_;
 };
 
 #endif

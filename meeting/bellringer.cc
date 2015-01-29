@@ -30,31 +30,56 @@ void Bellringer::check()
 //Wer schreibt den sowas?
 void Bellringer::job(Bell *bell, int ticks)
 {
-    //Counter der Bell einstellen, da sie ja 'überantwortet' wurde
-    bell->wait(ticks);
-
     //Die Liste in check immer komplett durchlaufen ist blöd,
     //also gleich sortiert einhängen
     Bell *iter = bellList.first();
-    if(!iter or iter->wait()>ticks)
+    Bell *oldIter;
+    Bell *veryOldIter;
+
+    if(!iter)
     {
         bellList.insert_first(bell);
+        bell->wait(ticks);
     }
     else
     {
-        while(iter->wait()<ticks)
+        int acc = 0;
+        oldIter = iter;
+        veryOldIter = oldIter;
+
+        while(acc<ticks)
         {
-            if(!iter->getnext())
+            if(iter)
             {
-                insert_after(iter, bell);
-                return;
+                acc+=iter->wait();
+                veryOldIter=oldIter;
+                oldIter=iter;
+                iter=iter->getnext();
             }
             else
             {
-                iter = iter->getnext();
+                bell->wait(ticks-acc);
+                insert_after(oldIter, bell);
+                return;
             }
         }
-        insert_after(iter, bell);
+        acc=acc-oldIter->wait();
+        int diff = ticks-acc;
+        bell->wait(diff);
+        insert_after(veryOldIter, bell);
+
+        int oldAcc = acc;
+        veryOldIter = veryOldIter->getnext();
+        iter=veryOldIter;
+        while(iter)
+        {
+            if(oldAcc+veryOldIter->wait()!=acc+iter->wait())
+            {
+                iter->wait(iter->wait()-diff);
+            }
+            iter=iter->getnext();
+            
+        }
     }
 }
 

@@ -34,6 +34,8 @@
 #include "user/app1/appl.h"
 #include "user/txt/appt.h"
 
+#include "meeting/bellringer.h"
+
 #include "syscall/guarded_scheduler.h"
 #include "syscall/guarded_semaphore.h"
 
@@ -52,6 +54,7 @@ Guard guard;
 Assassin assassin;
 WakeUp wakeup;
 Watch watch;
+Bellringer ringer;
 
 Guarded_Semaphore cgaSemaphore(1);
 

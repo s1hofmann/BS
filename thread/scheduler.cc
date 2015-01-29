@@ -125,11 +125,10 @@ void Scheduler::schedule()
     }
 }
 
-void Scheduler::block(Thread *t, Waitingroom *w)
+void Scheduler::block(Waitingroom *w)
 {
+    Thread *t = active();
     t->waiting_in(w);
-    // t sollte zu diesem Zeitpunkt nicht in readyList sein
-    //readyList.remove(t);
     w->add(t);
     exit();
 }
