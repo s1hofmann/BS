@@ -129,13 +129,12 @@ void Scheduler::block(Waitingroom *w)
 {
     Thread *t = active();
     t->waiting_in(w);
-    w->add(t);
     exit();
 }
 
 void Scheduler::wakeup(Thread *t)
 {
-    //t->waiting_in(0);
+    t->waiting_in(0);
     this->ready(t);
 }
     

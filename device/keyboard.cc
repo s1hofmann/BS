@@ -1,5 +1,4 @@
 #define DEBUG
-#define MAIN_WIDTH 79
 
 #include "object/debug.h"
 #include "machine/cpu.h"
@@ -13,7 +12,6 @@ extern Plugbox plugbox;
 extern CGA_Stream kout;
 extern APICSystem system;
 extern Scheduler scheduler;
-extern int posX, j;
 
 Keyboard::Keyboard() : Gate(), s(0)
 {
@@ -88,15 +86,4 @@ void Keyboard::epilogue()
         //DBG << "Running threads: " << dec << scheduler.getThreadCount() << endl;
     //}
 
-    //kout.setpos(posX,0);
-    //kout << k.ascii();
-    //k.invalidate();
-    //kout.flush();
-    //++posX;
-    //posX=posX%MAIN_WIDTH;
-
-    //if(posX==0)
-    //{
-        //kout.cls(' ');
-    //}
 }
