@@ -15,7 +15,7 @@ extern APICSystem system;
 extern Scheduler scheduler;
 extern int posX, j;
 
-Keyboard::Keyboard() : Gate(), s(1)
+Keyboard::Keyboard() : Gate(), s(0)
 {
 }
 
@@ -62,6 +62,7 @@ Key Keyboard::getkey()
     Key returnKey = k;
     k.invalidate();
 
+    DBG << "KEYPRESS: " << returnKey.ascii() << endl;
     return returnKey;
 }
 

@@ -9,12 +9,16 @@
 
 /*! \brief Systemaufrufschnittstelle zur Tastatur
  */
-class Guarded_Keyboard
+
+#include "device/keyboard.h"
+
+class Guarded_Keyboard : public Keyboard
 {
 private:
     Guarded_Keyboard(const Guarded_Keyboard &copy); // Verhindere Kopieren
 public:
-    Guarded_Keyboard() {}
+    Guarded_Keyboard() : Keyboard() {}
+    Key getkey();
 };
 
 #endif
