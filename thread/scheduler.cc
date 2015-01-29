@@ -22,13 +22,16 @@ void Scheduler::exit()
 {
     //exit() soll den aktuellen Thread nicht wieder in die readyList einhängen, 
     //sondern einfach den ersten Thread in der readyList ausführen.
-    Thread *then = readyList.dequeue();
     //Der dispatcher führt den Kontextwechsel durch
-    if(then){
+    if(!isEmpty())
+    {
+        Thread *then = readyList.dequeue();
         dispatch(then);
-    } else {
+    } 
+    else
+    {
         DBG << "readyList empty" << endl;
-        dispatch(&idleThreads[system.getCPUID()]);
+        dispatch(idleThreads[system.getCPUID()]);
     }
 }
 
@@ -64,24 +67,26 @@ void Scheduler::ready(Thread *t)
 void Scheduler::resume()
 {
     Thread *now = active();
-    // Es gibt sicherlich eine bessere Methode, um IdleThreads von anderen zu unterscheiden
-    if(now->getID() != 1337){
+    if(now != idleThreads[system.getCPUID()])
+    {
         readyList.enqueue(now);
     }
 
-    //Eventuell gekillte Threads überspringen
-    Thread *then;
-    then = readyList.dequeue();
-    while(then->dying())
+    if(!isEmpty())
     {
+        //Eventuell gekillte Threads überspringen
+        Thread *then;
         then = readyList.dequeue();
-    }
-
-    if(then){
+        while(then->dying())
+        {
+            then = readyList.dequeue();
+        }
         dispatch(then);
-    } else {
+    }
+    else
+    {
         DBG << "readyList empty" << endl;
-        dispatch(&idleThreads[system.getCPUID()]);
+        dispatch(idleThreads[system.getCPUID()]);
     }
 }
 
@@ -107,4 +112,14 @@ void Scheduler::wakeup(Thread *t)
 {
     t->waiting_in(0);
     this->ready(t);
+}
+    
+bool Scheduler::isEmpty()
+{
+    //Ich hoffe jetzt einfach mal es wird 0 zuückgegeben, wenn die Liste leer ist
+    return readyList.first();
+}
+void Scheduler::setIdleThread(int cpuId, Thread* idleThread)
+{
+    this->idleThreads[cpuId] = idleThread;
 }

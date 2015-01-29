@@ -33,10 +33,18 @@ public:
     void block(Thread *t, Waitingroom *w);
     void wakeup(Thread *t);
 
+    //Ex06
+    bool isEmpty();
+    void setIdleThread(int cpuId, Thread* idleThread);
+    void block(Waitingroom *waitingRoom);
+    void wakeUp(Thread *sleeping);
+
     //Custom methods
     void incrementThreadCount() { ++totalThreads; }
     void decrementThreadCount() { --totalThreads; }
     int getThreadCount() { return totalThreads; }
+
+    Thread* idleThreads[CPU_MAX];
 
 private:
     Queue<Thread> readyList;

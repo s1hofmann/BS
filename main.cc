@@ -55,7 +55,7 @@ Guarded_Semaphore cgaSemaphore(1);
 
 Application app[MAIN_WIDTH];
 TxtApp txt;
-IdleThread idleThreads[4];
+IdleThread idleThreads[CPU_MAX];
 
 long j = 0;
 int posX = 0;
@@ -92,13 +92,12 @@ extern "C" int main()
     for(int i=0; i<8; ++i)
     {
         app[i].setID(i);
-        Guarded_Scheduler::ready(&app[i]);
+        scheduler.ready(&app[i]);
     }
-    for(int i=0; i<4; ++i)
+    for(int i=0; i<CPU_MAX; ++i)
     {
         idleThreads[i].setID(1337);
-        // idleThreads nicht in die readyList!
-        //Guarded_Scheduler::ready(&idleThreads[i]);
+        scheduler.setIdleThread(i, &idleThreads[i]);
     }
 
     //txt.setID(100);
