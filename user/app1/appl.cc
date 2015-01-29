@@ -21,6 +21,7 @@
 #include "thread/scheduler.h"
 #include "syscall/guarded_scheduler.h"
 #include "syscall/guarded_semaphore.h"
+#include "syscall/guarded_bell.h"
 
 #define MAIN_WIDTH 79
 #define MAIN_HEIGHT 12
@@ -38,6 +39,7 @@ extern Scheduler scheduler;
 extern Guard guard;
 
 extern Guarded_Semaphore cgaSemaphore;
+Guarded_Bell bell;
 
 //Jede Application startet als Thread mit eigenem Stack
 //runstack+4000 ergibt die oberste Adresse des Stacks
@@ -85,7 +87,7 @@ void Application::action ()
         kout.setpos(x,y);
         kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
 */
-        cgaSemaphore.p();
+/*        cgaSemaphore.p();
         kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
 
         int c = 0;
@@ -100,11 +102,21 @@ void Application::action ()
         //guard.leave();
         cgaSemaphore.v();
         //Guarded_Scheduler::resume();
+*/
+        int c = 0;
         for(int i = 0; i<1000000; i++){
             for(int j = 0; j<1000; j++){
                 c++;
             }
             c -= 1000;
+        }
+
+        if(id == 0){
+            kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
+            bell.set(5);
+            bell.sleep();
+            kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
+            kout << "awake again!" << endl;
         }
     }
 }

@@ -22,6 +22,8 @@
 class Bell : public Waitingroom, public QueueEntry<Bell>
 {
 public:
+    Bell() {};
+    ~Bell() {};
     void ring();
     void sleep();
     void set(int ms) { startTime_ = ms; }
@@ -32,7 +34,7 @@ public:
 
     void tick() { --counter_; }
     bool run_down() { return counter_ == 0 ? true : false; }
-    
+
 private:
     Bell(const Bell &copy); // Verhindere Kopieren
     int counter_;

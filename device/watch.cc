@@ -10,12 +10,14 @@
 #include "thread/scheduler.h"
 #include "utils/math.h"
 #include "machine/apicsystem.h"
+#include "meeting/bellringer.h"
 
 extern Plugbox plugbox;
 extern LAPIC lapic;
 //extern IOAPIC ioapic;
 extern Scheduler scheduler;
 extern APICSystem system;
+extern Bellringer ringer;
 
 Watch::Watch()
 {
@@ -65,6 +67,10 @@ void Watch::epilogue()
 {
     ++this->time[system.getCPUID()];
     DBG << "Timer: " << dec << this->time[system.getCPUID()] << endl;
+    // Nur Thread mit ID 0 den Bellringer aufrufen lassen
+    if(!system.getCPUID())
+        ringer.check();
+
     scheduler.resume();
 }
 
