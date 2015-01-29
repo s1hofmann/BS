@@ -104,14 +104,15 @@ void Application::action ()
         //Guarded_Scheduler::resume();
 */
         int c = 0;
-        for(int i = 0; i<1000000; i++){
+        for(int i = 0; i<100000; i++){
             for(int j = 0; j<1000; j++){
                 c++;
             }
             c -= 1000;
         }
+        kout << "out t-" << id << " cpu-" << system.getCPUID() << endl;
 
-        if(id == 0){
+        if(id == 1){
             kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
             bell.set(5);
             bell.sleep();

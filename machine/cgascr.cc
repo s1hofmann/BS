@@ -95,7 +95,7 @@ void CGA_Screen::show(int x, int y, char character, unsigned char attrib)
 void CGA_Screen::scroll()
 {
     //Are we at the bottom line?
-    if(this->pos_y+1 >= this->scr_height)
+    if(this->pos_y >= this->scr_height-1)
     {
         for(int y = 0; y < this->scr_height-1; ++y)
         {
@@ -113,8 +113,11 @@ void CGA_Screen::scroll()
         }
 
         //Set cursor to last line
-        setpos(0, this->scr_height-2);
+        setpos(0, this->scr_height-1);
+    } else {
+        setpos(0, this->pos_y+1);
     }
+
 }
 
 void CGA_Screen::print(char *string, int length, unsigned char attrib)
@@ -126,7 +129,6 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
         if(string[i] == '\n')
         {
             scroll();
-            setpos(0, this->pos_y+1);
         }
         //Backspace
         else if(string[i] == 8)
@@ -158,7 +160,6 @@ void CGA_Screen::print(char *string, int length, unsigned char attrib)
         if(this->pos_x+1 > (this->scr_tx - this->scr_fx))
         {
             scroll();
-            setpos(0, this->pos_y+1);
         }
         ++i;
     }
