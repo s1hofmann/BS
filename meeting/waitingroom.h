@@ -30,7 +30,6 @@ private:
 
 public:
     Waitingroom() {}
-    virtual void add(Thread *t);
     virtual void remove(Thread *t);
     virtual ~Waitingroom();
 };

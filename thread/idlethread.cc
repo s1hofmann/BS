@@ -17,6 +17,7 @@ IdleThread::~IdleThread()
 
 void IdleThread::action()
 {
+    DBG << "IDLE" << endl;
     CPU::idle();
     Guarded_Scheduler::resume();
 }

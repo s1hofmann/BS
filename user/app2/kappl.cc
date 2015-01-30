@@ -6,9 +6,13 @@
 #include "syscall/guarded_keyboard.h"
 #include "device/cgastr.h"
 
+#define MAIN_WIDTH 79
+#define MAIN_HEIGTH 12
+
 extern Guarded_Semaphore cgaSemaphore;
 extern Guarded_Keyboard keyboard;
 extern CGA_Stream kout;
+extern int posX, j;
 
 KeyboardApplication::KeyboardApplication() : Thread(runstack+4000)
 {
@@ -23,6 +27,16 @@ void KeyboardApplication::action()
     k = keyboard.getkey();
 
     cgaSemaphore.p();
-    kout << k.ascii() << endl;
+    kout.setpos(posX,0);
+    kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::WHITE, false));
+    kout << k.ascii();
+    kout.flush();
+    ++posX;
+    posX=posX%MAIN_WIDTH;
+
+    if(posX==0)
+    {
+        kout.cls(' ');
+    }
     cgaSemaphore.v();
 }

@@ -54,7 +54,7 @@ Scheduler scheduler;
 Guard guard;
 Assassin assassin;
 WakeUp wakeup;
-Watch watch;
+Watch watch[CPU_MAX];
 Bellringer ringer;
 
 Guarded_Semaphore cgaSemaphore(1);
@@ -94,11 +94,10 @@ extern "C" int main()
     keyboard.plugin();
     assassin.hire();
     wakeup.activate();
-    //1 Sekunden Interval
-    watch_init = watch.windup(1000000);
+    watch_init = watch[system.getCPUID()].windup(1000);
 
     //for(int i=0; i<MAIN_WIDTH; ++i)
-    for(int i=0; i<8; ++i)
+    for(int i=0; i<2; ++i)
     {
         app[i].setID(i);
         scheduler.ready(&app[i]);
@@ -135,7 +134,7 @@ extern "C" int main()
     }
 
     if(watch_init)
-        watch.activate();
+        watch[system.getCPUID()].activate();
     guard.enter();
     //enable_int hier, nicht wie erst oben, da sonst sofort ein Interrupt kommen kann, der einen Taskwechsel ohne vorhandenen Task ausloest
     scheduler.schedule();
@@ -156,8 +155,10 @@ extern "C" int main_ap()
     //Code in here runs on multiply CPUs
     //This caused quite a mess when dealing with keyboard input in exercise 1
     
+    watch_init = watch[system.getCPUID()].windup(1000000);
+    
     if(watch_init)
-        watch.activate();
+        watch[system.getCPUID()].activate();
     guard.enter();
     scheduler.schedule();
 

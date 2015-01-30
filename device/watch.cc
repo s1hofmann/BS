@@ -66,9 +66,9 @@ bool Watch::prologue()
 void Watch::epilogue()
 {
     ++this->time[system.getCPUID()];
-    DBG << "Timer: " << dec << this->time[system.getCPUID()] << endl;
+    //DBG << "Timer: " << dec << this->time[system.getCPUID()] << endl;
     // Nur Thread mit ID 0 den Bellringer aufrufen lassen
-    if(!system.getCPUID())
+    //if(!system.getCPUID())
         ringer.check();
 
     scheduler.resume();

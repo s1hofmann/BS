@@ -18,6 +18,7 @@
 
 #include "thread/scheduler.h"
 #include "syscall/guarded_scheduler.h"
+#include "syscall/guarded_semaphore.h"
 
 #include "object/debug.h"
 
@@ -30,10 +31,7 @@ extern CGA_Stream dout_CPU1;
 extern CGA_Stream dout_CPU2;
 extern CGA_Stream dout_CPU3;
 
-extern Panic panic;
-extern Keyboard keyboard;
-extern Scheduler scheduler;
-extern Guard guard;
+extern Guarded_Semaphore cgaSemaphore;
 
 //Jede TxtApp startet als Thread mit eigenem Stack
 //runstack+4000 ergibt die oberste Adresse des Stacks
@@ -49,14 +47,18 @@ void TxtApp::action ()
 {
     while(true)
     {
-        guard.enter();
+        DBG << "TEXT" << endl;
+        b.set(500);
+        b.sleep();
+
+        cgaSemaphore.p();
         for(int i=0; i<1000; ++i)
         {
             kout.setpos(0,0);
             kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::WHITE, false));
             kout << "knock, knock..." << endl << endl << "follow the white rabbit..." << endl;
         }
-        guard.leave();
+        cgaSemaphore.v();
         Guarded_Scheduler::resume();
     }
 }

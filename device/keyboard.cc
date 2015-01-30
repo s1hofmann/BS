@@ -60,7 +60,7 @@ Key Keyboard::getkey()
     Key returnKey = k;
     k.invalidate();
 
-    DBG << "KEYPRESS: " << returnKey.ascii() << endl;
+    DBG << "KEY!" << endl;
     return returnKey;
 }
 
@@ -68,22 +68,4 @@ void Keyboard::epilogue()
 {
     //Im Epilog sollte die ganze Verarbeitung passiert sein, also wird die Semaphore wieder freigegeben
     s.v();
-
-
-    //if(k.ctrl() and k.alt() and k.scancode() == Key::scan::del)
-    //{
-        //this->reboot();
-    //}
-    //else if(k.ascii()=='k')
-    //{
-        //DBG << "KILLING IN THE NAME OF..." << endl << endl;
-        //if(scheduler.getThreadCount()>3)
-        //{
-            //scheduler.kill(scheduler.active());
-            //scheduler.decrementThreadCount();
-        //}
-        //DBG << "killed thread with id: " << dec << scheduler.active()->getID() << endl << endl;
-        //DBG << "Running threads: " << dec << scheduler.getThreadCount() << endl;
-    //}
-
 }

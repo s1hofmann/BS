@@ -15,6 +15,7 @@ void Semaphore::p()
     }
     else
     {
+        this->enqueue(scheduler.active());
         scheduler.block(this);
     }
 }

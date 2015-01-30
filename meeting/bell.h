@@ -26,19 +26,18 @@ public:
     ~Bell() {};
     void ring();
     void sleep();
-    void set(int ms) { startTime_ = ms; }
-    void sleep(int ms) { counter_ = ms; sleep(); }
+    void set(int ms);
+    void sleep(int ms);
 
-    void wait(int ms) { counter_ = ms; }
-    int wait() { return counter_; }
+    void wait(int ms);
+    int wait();
 
-    void tick() { --counter_; }
-    bool run_down() { return counter_ == 0 ? true : false; }
+    void tick();
+    bool run_down();
 
 private:
     Bell(const Bell &copy); // Verhindere Kopieren
     int counter_;
-    int startTime_;
 };
 
 #endif

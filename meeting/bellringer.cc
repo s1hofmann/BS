@@ -9,17 +9,22 @@
 //Wurde wegrationalisiert
 void Bellringer::check()
 {
-    DBG << "ringer check" << endl;
-
     Bell *bell;
-
     bell = first();
 
-    bell->tick();
-
-    if(bell->run_down())
+    while(bell)
     {
-        ring_the_bells();
+        if(bell->run_down())
+        {
+            dequeue();
+            bell->ring();
+            bell = first();
+        }
+        else
+        {
+            bell->tick();
+            return;
+        }
     }
 }
 
@@ -30,10 +35,8 @@ void Bellringer::job(Bell *bell, int ticks)
     //Die Liste in check immer komplett durchlaufen ist blöd,
     //also gleich sortiert einhängen
     Bell *iter = first();
-    Bell *oldIter;
-    //Bell *veryOldIter;
+    Bell *oldIter = 0;
 
-    // Wenn bellList leer, dann an erster Stelle einfuegen
     if(!iter)
     {
         bell->wait(ticks);
@@ -42,12 +45,8 @@ void Bellringer::job(Bell *bell, int ticks)
     }
     else
     {
-        //int acc = 0;
-        oldIter = iter;
-        //veryOldIter = oldIter;
-
         //Von ticks sollen alle vorherigen counter abgezogen werden
-        //-> iterieren über die liste solange es ein element iter gibt und sein bell->wait() größer ist als iter->wait()
+        //-> iterieren über die liste solange es ein element iter gibt und bell->wait() größer ist als iter->wait()
         //und dann bell->wait() auf bell->wait() - iter->wait() setzen
         
         while(iter and bell->wait() > iter->wait())
@@ -56,6 +55,7 @@ void Bellringer::job(Bell *bell, int ticks)
             oldIter = iter;
             iter = iter->getnext();
         }
+
         if(oldIter)
         {
             insert_after(oldIter, bell);
@@ -65,42 +65,8 @@ void Bellringer::job(Bell *bell, int ticks)
             insert_first(bell);
         }
 
-        // Solange Akkumulator kleiner als Ticks, durch Liste hangeln
-        // Andernfalls ist Position zum Einfuegen erreicht
-        //while(acc<ticks)
-        //{
-
-            //// Ende der Liste erreicht? -> Einfuegen!
-            //if(!iter)
-            //{
-                //bell->wait(ticks-acc);
-                //insert_after(oldIter, bell);
-                //return;
-            //}
-
-            //acc+=iter->wait();
-            //veryOldIter=oldIter;
-            //oldIter=iter;
-            //iter=iter->getnext();
-        //}
-
-        //// Vorigen Akkumulator wieder herstellen
-        //acc=acc-oldIter->wait();
-        //int diff = ticks-acc;
-        //bell->wait(diff);
-        //insert_after(veryOldIter, bell);
-
-        //veryOldIter = veryOldIter->getnext();
-        //iter=veryOldIter;
-
-        //while(iter)
-        //{
-            //if(0 != iter->wait())
-            //{
-                //iter->wait(iter->wait()-diff);
-            //}
-            //iter=iter->getnext();
-        //}
+        //Das Element NACH der eingefügten Bell muss auch noch aktualisiert werden
+        iter->wait(iter->wait()-bell->wait());
     }
 }
 
@@ -110,6 +76,16 @@ void Bellringer::job(Bell *bell, int ticks)
 //Die Elemente nach der Bell müssen aktualisiert werden?
 void Bellringer::cancel(Bell *bell)
 {
+    Bell *iter = first();
+    while(iter and iter!=bell)
+    {
+        iter = iter->getnext();
+    }
+    iter=iter->getnext();
+    if(iter)
+    {
+        iter->wait(iter->wait()+bell->wait());
+    }
     remove(bell);
 }
 

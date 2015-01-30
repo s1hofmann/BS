@@ -16,7 +16,7 @@
 
 extern Guard guard;
 extern APICSystem system;
-extern IdleThread idleThreads[4];
+extern IdleThread idleThreads[];
 
 void Scheduler::kill(Thread *t)
 {
@@ -24,6 +24,10 @@ void Scheduler::kill(Thread *t)
     Thread *victim = readyList.remove(t);
     if(!victim)
     {
+        if(t->waiting_in())
+        {
+            (t->waiting_in())->remove(t);
+        }
         //Thread wurde nicht in readyList gefunden -> kill_flag setzen
         t->set_kill_flag();
 
@@ -50,7 +54,9 @@ void Scheduler::ready(Thread *t)
     int logicalDestination = 1;
     for(int i=0; i<CPU_MAX; ++i)
     {
-        if(life[i]==idleThreads[i])
+        //Wenn ein neuer Thread aktiv wird sollen alle CPUs geweckt werden
+        //
+        if(i!=system.getCPUID())
         {
             //Logicaldestination durch lapic erhalten
             system.sendCustomIPI(logicalDestination<<i, Plugbox::wakeup);
@@ -75,7 +81,7 @@ void Scheduler::exit()
     }
     else
     {
-        DBG << "readyList empty" << endl;
+        //DBG << "readyList empty" << endl;
         dispatch(idleThreads[system.getCPUID()]);
     }
 }
@@ -125,15 +131,21 @@ void Scheduler::schedule()
     }
 }
 
+//Sollte der Thread nicht beim Waitingroom enqueued werden?
 void Scheduler::block(Waitingroom *w)
 {
     Thread *t = active();
+    //w->enqueue(t);
     t->waiting_in(w);
     exit();
 }
 
 void Scheduler::wakeup(Thread *t)
 {
+    //if(t->waiting_in())
+    //{
+        //t->waiting_in()->remove(t);
+    //}
     t->waiting_in(0);
     this->ready(t);
 }

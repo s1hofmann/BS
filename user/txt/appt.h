@@ -9,6 +9,7 @@
 #define TXT_APPLICATION_INCLUDE
 
 #include "thread/thread.h"
+#include "syscall/guarded_bell.h"
 
 /*! \brief Die Klasse TxtApp definiert eine Anwendung für OO-Stubs.
  */
@@ -18,6 +19,7 @@ private:
     TxtApp(const TxtApp &copy); // Verhindere Kopieren
     int id;
     char runstack[4000];
+    Guarded_Bell b;
      
 public:
     TxtApp();

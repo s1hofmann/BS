@@ -10,6 +10,7 @@
 
 #include "thread/thread.h"
 #include "machine/spinlock.h"
+#include "syscall/guarded_bell.h"
 
 /*! \brief Die Klasse Application definiert eine Anwendung für OO-Stubs.
  */
@@ -19,6 +20,7 @@ private:
     Application(const Application &copy); // Verhindere Kopieren
     int id;
     char runstack[4000];
+    Guarded_Bell bell;
      
 public:
     Application();

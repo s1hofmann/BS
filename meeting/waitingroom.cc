@@ -9,14 +9,9 @@ extern Scheduler scheduler;
 extern APICSystem system;
 extern Plugbox plugbox;
 
-void Waitingroom::add(Thread *t)
-{
-    this->enqueue(t);
-}
-
 void Waitingroom::remove(Thread *t)
 {
-    scheduler.ready(Queue::remove(t));
+    Queue::remove(t);
 }
 
 Waitingroom::~Waitingroom()
