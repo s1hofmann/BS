@@ -66,25 +66,28 @@ unsigned long Application::rand(void)
 
 void Application::action ()
 {
-    bell.set(50000);
-
-    cgaSemaphore.p();
-    CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
-    unsigned int x = rand()%MAIN_WIDTH;
-    unsigned int y = rand()%MAIN_HEIGHT+1;
-
-    for(unsigned int i=1; i<MAIN_HEIGHT; ++i)
+    while(true)
     {
-        unsigned char textcolor = CGA_Screen::attribute(CGA_Screen::BLACK, colors[i%3], false);
-        kout.setcolor(textcolor);
-        kout.setpos(x, i);
-        char c = rand()%26+'a';
-        kout << c << endl;
+        bell.set(10000);
+
+        cgaSemaphore.p();
+        CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
+        unsigned int x = rand()%MAIN_WIDTH;
+        unsigned int y = rand()%MAIN_HEIGHT+1;
+
+        for(unsigned int i=1; i<MAIN_HEIGHT; ++i)
+        {
+            unsigned char textcolor = CGA_Screen::attribute(CGA_Screen::BLACK, colors[i%3], false);
+            kout.setcolor(textcolor);
+            kout.setpos(x, i);
+            char c = rand()%26+'a';
+            kout << c << endl;
+        }
+        kout.setpos(x,y);
+        kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
+        kout << id << endl;
+        cgaSemaphore.v();
+        
+        bell.sleep();
     }
-    kout.setpos(x,y);
-    kout.setcolor(CGA_Screen::attribute(CGA_Screen::BLACK, CGA_Screen::RED, false));
-    kout << id << endl;
-    cgaSemaphore.v();
-    
-    bell.sleep();
 }

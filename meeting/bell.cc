@@ -1,12 +1,14 @@
-// vim: set et ts=4 sw=4:
+    // vim: set et ts=4 sw=4:
 
 #include "meeting/bell.h"
 #include "thread/thread.h"
 #include "thread/scheduler.h"
 #include "meeting/bellringer.h"
+#include "device/watch.h"
 
 extern Scheduler scheduler;
 extern Bellringer ringer;
+extern Watch watch[];
 
 void Bell::sleep()
 {
@@ -37,13 +39,15 @@ void Bell::ring()
     
 void Bell::set(int ms) 
 { 
+    int ticks = ms*1000;
+    ticks/=watch[0].interval();
     ringer.cancel(this);
-    ringer.job(this, ms); 
+    ringer.job(this, ticks); 
 }
     
-void Bell::wait(int ms)
+void Bell::wait(int ticks)
 { 
-    counter_ = ms;
+    counter_ = ticks;
 }
 
 int Bell::wait()

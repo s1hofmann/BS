@@ -17,14 +17,9 @@ void Waitingroom::remove(Thread *t)
 Waitingroom::~Waitingroom()
 {
     Thread *t;
-    int logicalDestination=1;
 
     while((t = this->dequeue()))
     {
         scheduler.ready(t);
-        for(int i=0; i<CPU_MAX; ++i)
-        {
-            system.sendCustomIPI(logicalDestination<<i, Plugbox::wakeup);
-        }
     }
 }

@@ -27,6 +27,7 @@ void Scheduler::kill(Thread *t)
         if(t->waiting_in())
         {
             (t->waiting_in())->remove(t);
+            return;
         }
         //Thread wurde nicht in readyList gefunden -> kill_flag setzen
         t->set_kill_flag();
