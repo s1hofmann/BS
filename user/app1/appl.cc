@@ -66,7 +66,7 @@ unsigned long Application::rand(void)
 
 void Application::action ()
 {
-    bell.set(50);
+    bell.set(50000);
 
     cgaSemaphore.p();
     CGA_Screen::color colors[3] = {CGA_Screen::DARK_GREY, CGA_Screen::LIGHT_GREEN, CGA_Screen::GREEN};
@@ -87,37 +87,4 @@ void Application::action ()
     cgaSemaphore.v();
     
     bell.sleep();
-
-/*        cgaSemaphore.p();
-        kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
-
-        int c = 0;
-        for(int i = 0; i<1000000; i++){
-            for(int j = 0; j<1000; j++){
-                c++;
-            }
-            c -= 1000;
-        }
-
-        kout << "out t-" << id << " cpu-" << system.getCPUID() << endl;
-        //guard.leave();
-        cgaSemaphore.v();
-        //Guarded_Scheduler::resume();
-*/
-        //int c = 0;
-        //for(int i = 0; i<100000; i++){
-            //for(int j = 0; j<1000; j++){
-                //c++;
-            //}
-            //c -= 1000;
-        //}
-        //kout << "out t-" << id << " cpu-" << system.getCPUID() << endl;
-
-        //if(id == 1){
-            //kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
-            //bell.set(5);
-            //bell.sleep();
-            //kout << "in t-" << id << " cpu-" << system.getCPUID() << endl;
-            //kout << "awake again!" << endl;
-        //}
 }

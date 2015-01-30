@@ -24,7 +24,7 @@ class WakeUp : public Gate
 {
     public:
         void activate() { plugbox.assign(Plugbox::wakeup, this); }
-        bool prologue() { return false; }//DBG << "wakeup!" << endl; return false; }
+        bool prologue() { DBG << "WAKE" << endl; return false; }
 };
 
 #endif /* __WAKEUP_H__ */

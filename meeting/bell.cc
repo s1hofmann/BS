@@ -20,7 +20,7 @@ void Bell::sleep()
 
 void Bell::sleep(int ms)
 {
-    counter_ = ms;
+    set(ms);
     sleep();
 }
 
